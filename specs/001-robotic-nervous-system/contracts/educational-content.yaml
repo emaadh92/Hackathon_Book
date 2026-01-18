@@ -1,0 +1,377 @@
+# API Contracts: Educational Content Delivery for Robotic Nervous System
+
+## Overview
+
+These contracts define the structure and organization of educational content for Module 1: The Robotic Nervous System. Rather than traditional API endpoints, these contracts specify how educational materials will be organized, categorized, and connected to ensure a coherent learning experience.
+
+## Content Organization Contract
+
+### Base Content Structure
+```
+GET /module-1-robotic-nervous-system/{section}/{topic}
+```
+
+**Purpose**: Define the hierarchical organization of educational content
+
+**Response Structure**:
+```json
+{
+  "moduleId": "001-robotic-nervous-system",
+  "moduleName": "The Robotic Nervous System",
+  "section": "{introduction|communication-concepts|practical-applications}",
+  "topic": "{specific-topic-name}",
+  "title": "Descriptive title for the content",
+  "learningObjectives": ["objective1", "objective2"],
+  "content": "Main educational content in MDX format",
+  "analogiesUsed": ["analogy1", "analogy2"],
+  "visualElements": ["diagram1", "animation1"],
+  "previousTopic": "URL to previous topic",
+  "nextTopic": "URL to next topic",
+  "relatedTopics": ["URL1", "URL2"],
+  "exercises": ["exercise1", "exercise2"],
+  "estimatedReadingTime": "minutes"
+}
+```
+
+## Educational Content Types
+
+### 1. Concept Introduction Contract
+```
+POST /concepts/introduce
+```
+
+**Purpose**: Standardized format for introducing new concepts using analogies
+
+**Request Body**:
+```json
+{
+  "conceptName": "string",
+  "realWorldAnalogy": {
+    "domain": "human_body|company|city|etc",
+    "comparison": "detailed comparison explanation",
+    "validityRange": "situations where analogy holds true"
+  },
+  "technicalCounterpart": "actual robotics concept",
+  "keyCharacteristics": ["characteristic1", "characteristic2"],
+  "commonMisconceptions": ["misconception1", "misconception2"]
+}
+```
+
+**Response**: Formatted educational content with analogy prominently featured
+
+### 2. Visualization Request Contract
+```
+GET /visualizations/{type}/{concept}
+```
+
+**Purpose**: Retrieve appropriate visual aids for different concepts
+
+**Supported Types**:
+- `flow-diagram`: Shows information flow between components
+- `analogy-illustration`: Visual representation of real-world analogies
+- `component-map`: Shows how robot parts connect
+- `interaction-pattern`: Demonstrates communication patterns
+
+**Response**:
+```json
+{
+  "visualizationId": "unique-id",
+  "type": "flow-diagram|analogy-illustration|component-map|interaction-pattern",
+  "concept": "related concept name",
+  "svgContent": "SVG markup or URL to asset",
+  "interactiveElements": ["element1", "element2"],
+  "labels": {"element1": "description"},
+  "explanation": "Text explanation of the visualization"
+}
+```
+
+## Learning Path Contract
+
+### Sequential Learning Path
+```
+GET /learning-path/{starting-point}/sequence
+```
+
+**Purpose**: Define the recommended sequence of topics for optimal learning
+
+**Response**:
+```json
+{
+  "pathId": "foundational-to-advanced",
+  "title": "Recommended Learning Sequence",
+  "steps": [
+    {
+      "order": 1,
+      "topicId": "basic-concepts",
+      "prerequisites": [],
+      "learningGoals": ["understand basic terminology"],
+      "estimatedTime": "15 minutes"
+    },
+    {
+      "order": 2,
+      "topicId": "communication-analogies",
+      "prerequisites": ["basic-concepts"],
+      "learningGoals": ["understand communication patterns"],
+      "estimatedTime": "25 minutes"
+    }
+  ],
+  "completionCriteria": {
+    "understandingThreshold": 0.8,
+    "assessmentScore": 0.75
+  }
+}
+```
+
+## Assessment Integration Contract
+
+### Comprehension Check
+```
+POST /assessments/comprehension
+```
+
+**Purpose**: Submit answers to comprehension questions and receive feedback
+
+**Request Body**:
+```json
+{
+  "userId": "anonymous or authenticated user",
+  "topicId": "current topic being assessed",
+  "answers": [
+    {
+      "questionId": "unique-question-identifier",
+      "selectedOption": "option-id or free-form text",
+      "confidenceLevel": 1-5 scale
+    }
+  ],
+  "timeTaken": "seconds to complete"
+}
+```
+
+**Response**:
+```json
+{
+  "assessmentId": "unique-assessment-id",
+  "results": {
+    "overallScore": 0.0-1.0,
+    "breakdown": {
+      "conceptualUnderstanding": 0.0-1.0,
+      "analogyApplication": 0.0-1.0,
+      "practicalConnection": 0.0-1.0
+    },
+    "recommendations": [
+      {
+        "action": "review-topic|continue-learning|practice-more",
+        "topicId": "recommended-topic",
+        "reason": "explanation of recommendation"
+      }
+    ],
+    "misconceptionsDetected": ["concept1", "concept2"]
+  }
+}
+```
+
+## Interactive Exercise Contract
+
+### Scenario-Based Exercise
+```
+POST /exercises/scenario
+```
+
+**Purpose**: Engage students with scenario-based learning exercises
+
+**Request Body**:
+```json
+{
+  "scenarioId": "unique-scenario-identifier",
+  "studentInput": "student's response or decision",
+  "context": {
+    "robotConfiguration": "description of robot setup",
+    "environmentalFactors": ["factor1", "factor2"],
+    "desiredOutcome": "what robot should accomplish"
+  }
+}
+```
+
+**Response**:
+```json
+{
+  "exerciseId": "unique-exercise-id",
+  "evaluation": {
+    "accuracy": 0.0-1.0,
+    "reasoningQuality": "high|medium|low",
+    "appliedConcepts": ["concept1", "concept2"],
+    "feedback": "constructive feedback for the student"
+  },
+  "learningPoints": [
+    {
+      "concept": "related concept",
+      "explanation": "why this matters",
+      "connection": "how it relates to other concepts"
+    }
+  ]
+}
+```
+
+## Content Retrieval Contracts
+
+### Related Content Discovery
+```
+GET /content/related/{current-topic-id}
+```
+
+**Purpose**: Find related educational content to deepen understanding
+
+**Query Parameters**:
+- `depth`: How many levels of related content to return
+- `type`: Filter by content type (concept, exercise, visualization)
+- `difficulty`: Filter by difficulty level
+
+**Response**:
+```json
+{
+  "topicId": "current-topic",
+  "relatedContent": [
+    {
+      "relatedTopicId": "related-topic-id",
+      "relationshipType": "prerequisite|extension|alternative-perspective|application",
+      "relevanceScore": 0.0-1.0,
+      "title": "Related content title",
+      "summary": "Brief description",
+      "estimatedTime": "time to consume",
+      "accessibilityFeatures": ["feature1", "feature2"]
+    }
+  ]
+}
+```
+
+### Concept Search
+```
+GET /concepts/search
+```
+
+**Purpose**: Search for concepts by keyword, analogy, or application
+
+**Query Parameters**:
+- `q`: Search query
+- `byAnalogy`: Whether to search in analogies as well as technical content
+- `complexityMin`: Minimum complexity level
+- `complexityMax`: Maximum complexity level
+
+**Response**:
+```json
+{
+  "searchQuery": "original query",
+  "results": [
+    {
+      "conceptId": "unique-concept-id",
+      "title": "Concept title",
+      "matchingExcerpt": "Relevant excerpt from content",
+      "primaryAnalogy": "Main real-world comparison",
+      "relatedSections": ["section1", "section2"],
+      "matchConfidence": 0.0-1.0
+    }
+  ]
+}
+```
+
+## Progress Tracking Contract
+
+### Learning Progress
+```
+GET /progress/user/{userId}/module/{moduleId}
+```
+
+**Purpose**: Track and report on student progress through the module
+
+**Response**:
+```json
+{
+  "userId": "user identifier",
+  "moduleId": "001-robotic-nervous-system",
+  "moduleName": "The Robotic Nervous System",
+  "overallProgress": 0.0-1.0,
+  "completedTopics": ["topic1", "topic2"],
+  "timeSpent": "total minutes",
+  "assessmentScores": {
+    "average": 0.0-1.0,
+    "trend": "improving|declining|stable"
+  },
+  "conceptMastery": {
+    "robotNodes": 0.0-1.0,
+    "communicationChannels": 0.0-1.0,
+    "servicesAndActions": 0.0-1.0
+  },
+  "recommendedNextSteps": ["topic1", "exercise2"],
+  "certificationEligible": true|false
+}
+```
+
+## Content Customization Contract
+
+### Adaptive Content Delivery
+```
+POST /content/adapt
+```
+
+**Purpose**: Customize content delivery based on learning style and progress
+
+**Request Body**:
+```json
+{
+  "userId": "user identifier",
+  "preferences": {
+    "learningStyle": "visual|auditory|kinesthetic|reading-writing",
+    "pace": "slow|moderate|fast",
+    "detailPreference": "overview|balanced|comprehensive",
+    "analogyPreference": "simple|moderate|technical"
+  },
+  "progressData": {
+    "recentTopics": ["topic1", "topic2"],
+    "assessmentHistory": [{"topic": "x", "score": 0.8}],
+    "timeSpentPerTopic": {"topic1": 15, "topic2": 25}
+  },
+  "currentTopic": "topic currently being studied"
+}
+```
+
+**Response**:
+```json
+{
+  "adaptedContent": {
+    "presentationStyle": "adjusted for user preferences",
+    "contentDepth": "adjusted level of detail",
+    "analogyComplexity": "simple|moderate|detailed",
+    "visualEmphasis": "high|medium|low",
+    "interactiveElements": ["element1", "element2"]
+  },
+  "suggestedAdjustments": [
+    {
+      "aspect": "learning pace",
+      "suggestion": "slow down for better retention",
+      "evidence": "assessment data indicates gaps"
+    }
+  ]
+}
+```
+
+## Error Handling Standards
+
+All API contracts should follow these error response patterns:
+
+```json
+{
+  "error": {
+    "code": "ERROR_TYPE",
+    "message": "Human-readable error message",
+    "details": "Additional context about the error",
+    "suggestion": "How to resolve the issue"
+  }
+}
+```
+
+Common error codes:
+- `CONTENT_NOT_FOUND`: Requested educational content does not exist
+- `PREREQUISITE_MISSING`: User needs to complete prerequisite material
+- `ASSESSMENT_LOCKED`: Cannot submit assessment without completing learning material
+- `INVALID_INPUT`: Provided data does not match expected format
+- `RATE_LIMITED`: Too many requests within time window

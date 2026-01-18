@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Match Robot Functions with Responsibilities</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2E86AB;
+            text-align: center;
+        }
+        .game-container {
+            display: flex;
+            justify-content: space-between;
+            margin: 30px 0;
+        }
+        .functions-column, .responsibilities-column {
+            width: 45%;
+        }
+        .item {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid #ddd;
+        }
+        .functions-column .item {
+            background-color: #e6f2f7;
+            border-color: #2E86AB;
+        }
+        .responsibilities-column .item {
+            background-color: #f7ebf0;
+            border-color: #A23B72;
+        }
+        .item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .item.selected {
+            background-color: #b3d9ff;
+            border-color: #0066cc;
+        }
+        .responsibilities-column .item.selected {
+            background-color: #ffcccc;
+            border-color: #cc0000;
+        }
+        .match-area {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 10%;
+            font-size: 24px;
+        }
+        .match-pair {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 15px 0;
+            padding: 10px;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+        }
+        .matched-function, .matched-responsibility {
+            padding: 10px;
+            border-radius: 5px;
+            width: 40%;
+        }
+        .matched-function {
+            background-color: #2E86AB;
+            color: white;
+        }
+        .matched-responsibility {
+            background-color: #A23B72;
+            color: white;
+        }
+        .controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+        button {
+            background-color: #2E86AB;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #1A5A7F;
+        }
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            display: none;
+        }
+        .correct {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .instructions {
+            background-color: #e6f7ff;
+            border-left: 4px solid #1890ff;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Match Robot Functions with Their Responsibilities</h1>
+
+        <div class="instructions">
+            <p><strong>How to play:</strong> Click on a robot function from the left column, then click on its matching responsibility from the right column. Correct matches will appear in the center area. Try to match all functions with their correct responsibilities!</p>
+        </div>
+
+        <div class="game-container">
+            <div class="functions-column">
+                <h2>Robot Functions</h2>
+                <div class="item" data-type="function" data-value="vision">Vision Department</div>
+                <div class="item" data-type="function" data-value="motor">Motor Control Department</div>
+                <div class="item" data-type="function" data-value="decision">Executive Decision Department</div>
+                <div class="item" data-type="function" data-value="safety">Safety Monitor Department</div>
+                <div class="item" data-type="function" data-value="fusion">Information Integration Department</div>
+            </div>
+
+            <div class="match-area">
+                <div>→</div>
+            </div>
+
+            <div class="responsibilities-column">
+                <h2>Responsibilities</h2>
+                <div class="item" data-type="responsibility" data-value="vision">Processes visual information to understand the environment</div>
+                <div class="item" data-type="responsibility" data-value="motor">Controls movement and physical actuation</div>
+                <div class="item" data-type="responsibility" data-value="decision">Coordinates behaviors and makes high-level decisions</div>
+                <div class="item" data-type="responsibility" data-value="safety">Monitors for hazards and ensures safe operation</div>
+                <div class="item" data-type="responsibility" data-value="fusion">Combines data from multiple sensors into unified information</div>
+            </div>
+        </div>
+
+        <div class="match-results">
+            <h3>Your Matches</h3>
+            <div id="matchesContainer"></div>
+        </div>
+
+        <div class="controls">
+            <button onclick="checkMatches()">Check Answers</button>
+            <button onclick="resetGame()">Reset Game</button>
+            <button onclick="showSolution()">Show Solution</button>
+        </div>
+
+        <div id="feedback" class="feedback"></div>
+    </div>
+
+    <script>
+        let selectedFunction = null;
+        let selectedResponsibility = null;
+        const matches = [];
+
+        // Add click event listeners to all items
+        document.querySelectorAll('.item').forEach(item => {
+            item.addEventListener('click', () => {
+                const type = item.getAttribute('data-type');
+                const value = item.getAttribute('data-value');
+
+                if (type === 'function') {
+                    // Deselect previous selection
+                    document.querySelectorAll('.functions-column .item').forEach(i => {
+                        i.classList.remove('selected');
+                    });
+
+                    if (selectedFunction === value) {
+                        selectedFunction = null;
+                    } else {
+                        selectedFunction = value;
+                        item.classList.add('selected');
+                    }
+                } else if (type === 'responsibility') {
+                    // Deselect previous selection
+                    document.querySelectorAll('.responsibilities-column .item').forEach(i => {
+                        i.classList.remove('selected');
+                    });
+
+                    if (selectedResponsibility === value) {
+                        selectedResponsibility = null;
+                    } else {
+                        selectedResponsibility = value;
+                        item.classList.add('selected');
+                    }
+                }
+
+                // If both are selected, create a match
+                if (selectedFunction && selectedResponsibility) {
+                    createMatch(selectedFunction, selectedResponsibility);
+                    selectedFunction = null;
+                    selectedResponsibility = null;
+
+                    // Remove selections
+                    document.querySelectorAll('.item').forEach(i => {
+                        i.classList.remove('selected');
+                    });
+                }
+            });
+        });
+
+        function createMatch(funcValue, respValue) {
+            // Check if this combination already exists
+            const exists = matches.some(match => match.func === funcValue && match.resp === respValue);
+            if (exists) return;
+
+            matches.push({func: funcValue, resp: respValue});
+            updateMatchesDisplay();
+        }
+
+        function updateMatchesDisplay() {
+            const container = document.getElementById('matchesContainer');
+            container.innerHTML = '';
+
+            matches.forEach((match, index) => {
+                const pairDiv = document.createElement('div');
+                pairDiv.className = 'match-pair';
+
+                const funcDiv = document.createElement('div');
+                funcDiv.className = 'matched-function';
+                funcDiv.textContent = getFunctionText(match.func);
+
+                const arrowDiv = document.createElement('div');
+                arrowDiv.textContent = '↔';
+
+                const respDiv = document.createElement('div');
+                respDiv.className = 'matched-responsibility';
+                respDiv.textContent = getResponsibilityText(match.resp);
+
+                const removeBtn = document.createElement('button');
+                removeBtn.textContent = 'Remove';
+                removeBtn.onclick = () => removeMatch(index);
+                removeBtn.style.marginLeft = '10px';
+
+                pairDiv.appendChild(funcDiv);
+                pairDiv.appendChild(arrowDiv);
+                pairDiv.appendChild(respDiv);
+                pairDiv.appendChild(removeBtn);
+
+                container.appendChild(pairDiv);
+            });
+        }
+
+        function removeMatch(index) {
+            matches.splice(index, 1);
+            updateMatchesDisplay();
+        }
+
+        function getFunctionText(value) {
+            const map = {
+                'vision': 'Vision Department',
+                'motor': 'Motor Control Department',
+                'decision': 'Executive Decision Department',
+                'safety': 'Safety Monitor Department',
+                'fusion': 'Information Integration Department'
+            };
+            return map[value];
+        }
+
+        function getResponsibilityText(value) {
+            const map = {
+                'vision': 'Processes visual information to understand the environment',
+                'motor': 'Controls movement and physical actuation',
+                'decision': 'Coordinates behaviors and makes high-level decisions',
+                'safety': 'Monitors for hazards and ensures safe operation',
+                'fusion': 'Combines data from multiple sensors into unified information'
+            };
+            return map[value];
+        }
+
+        function checkMatches() {
+            const feedback = document.getElementById('feedback');
+            feedback.style.display = 'block';
+
+            // Correct matches
+            const correctAnswers = [
+                {func: 'vision', resp: 'vision'},
+                {func: 'motor', resp: 'motor'},
+                {func: 'decision', resp: 'decision'},
+                {func: 'safety', resp: 'safety'},
+                {func: 'fusion', resp: 'fusion'}
+            ];
+
+            let allCorrect = true;
+            let score = 0;
+
+            correctAnswers.forEach(answer => {
+                const found = matches.find(match => match.func === answer.func && match.resp === answer.resp);
+                if (!found) {
+                    allCorrect = false;
+                } else {
+                    score++;
+                }
+            });
+
+            if (allCorrect && matches.length === 5) {
+                feedback.className = 'feedback correct';
+                feedback.innerHTML = `<h3>Excellent!</h3><p>You matched all 5 functions with their correct responsibilities.</p>`;
+            } else {
+                feedback.className = 'feedback incorrect';
+                feedback.innerHTML = `<h3>Keep Trying!</h3><p>You got ${score} out of 5 correct. Review the matches and try again.</p>`;
+            }
+        }
+
+        function resetGame() {
+            matches.length = 0;
+            selectedFunction = null;
+            selectedResponsibility = null;
+
+            document.querySelectorAll('.item').forEach(i => {
+                i.classList.remove('selected');
+            });
+
+            updateMatchesDisplay();
+
+            const feedback = document.getElementById('feedback');
+            feedback.style.display = 'none';
+        }
+
+        function showSolution() {
+            resetGame();
+
+            // Add all correct matches
+            matches.push({func: 'vision', resp: 'vision'});
+            matches.push({func: 'motor', resp: 'motor'});
+            matches.push({func: 'decision', resp: 'decision'});
+            matches.push({func: 'safety', resp: 'safety'});
+            matches.push({func: 'fusion', resp: 'fusion'});
+
+            updateMatchesDisplay();
+
+            const feedback = document.getElementById('feedback');
+            feedback.style.display = 'block';
+            feedback.className = 'feedback correct';
+            feedback.innerHTML = `<h3>Solution Shown</h3><p>All correct matches are now displayed. Study these relationships between robot functions and their responsibilities.</p>`;
+        }
+    </script>
+</body>
+</html>

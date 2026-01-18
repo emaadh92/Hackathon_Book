@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="700">
+  <style>
+    .function { fill: #2E86AB; stroke: #1A5A7F; stroke-width: 2; rx: 10; ry: 10; }
+    .function-title { fill: white; font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; text-anchor: middle; dominant-baseline: middle; }
+    .function-desc { fill: white; font-family: Arial, sans-serif; font-size: 12px; text-anchor: middle; dominant-baseline: middle; }
+    .topic { fill: #A23B72; stroke: #7A2A56; stroke-width: 2; rx: 8; ry: 8; }
+    .service { fill: #F18F01; stroke: #B86B00; stroke-width: 2; rx: 8; ry: 8; }
+    .arrow { stroke: #333; stroke-width: 2; marker-end: url(#arrowhead); }
+    .arrow-label { fill: #333; font-family: Arial, sans-serif; font-size: 11px; text-anchor: middle; }
+    .legend-text { fill: #333; font-family: Arial, sans-serif; font-size: 12px; }
+  </style>
+
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7"
+      refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="500" y="40" class="legend-text" font-size="20" text-anchor="middle" font-weight="bold">Robot Functions and Their Responsibilities</text>
+  <text x="500" y="60" class="legend-text" text-anchor="middle">Showing Communication Patterns and Information Flow</text>
+
+  <!-- Robot Functions (Nodes) -->
+  <!-- Decision Maker (Top Row) -->
+  <rect x="50" y="100" width="200" height="80" class="function"/>
+  <text x="150" y="125" class="function-title">Executive Decision Department</text>
+  <text x="150" y="150" class="function-desc">Coordinates behaviors, makes decisions</text>
+
+  <!-- Vision Processor (Top Row) -->
+  <rect x="275" y="100" width="200" height="80" class="function"/>
+  <text x="375" y="125" class="function-title">Vision Department</text>
+  <text x="375" y="150" class="function-desc">Processes visual information</text>
+
+  <!-- Sensor Fusion (Top Row) -->
+  <rect x="500" y="100" width="200" height="80" class="function"/>
+  <text x="600" y="125" class="function-title">Information Integration</text>
+  <text x="600" y="150" class="function-desc">Combines sensor data</text>
+
+  <!-- Safety Monitor (Top Row) -->
+  <rect x="725" y="100" width="200" height="80" class="function"/>
+  <text x="825" y="125" class="function-title">Safety Monitor</text>
+  <text x="825" y="150" class="function-desc">Monitors for hazards</text>
+
+  <!-- Motor Controller (Bottom Row) -->
+  <rect x="150" y="400" width="200" height="80" class="function"/>
+  <text x="250" y="425" class="function-title">Motor Control</text>
+  <text x="250" y="450" class="function-desc">Handles movement commands</text>
+
+  <!-- Navigation (Bottom Row) -->
+  <rect x="375" y="400" width="200" height="80" class="function"/>
+  <text x="475" y="425" class="function-title">Navigation Department</text>
+  <text x="475" y="450" class="function-desc">Plans paths and avoids obstacles</text>
+
+  <!-- Manipulation (Bottom Row) -->
+  <rect x="600" y="400" width="200" height="80" class="function"/>
+  <text x="700" y="425" class="function-title">Manipulation Department</text>
+  <text x="700" y="450" class="function-desc">Controls grippers and tools</text>
+
+  <!-- Communication Channels (Topics) -->
+  <rect x="100" y="250" width="150" height="50" class="topic"/>
+  <text x="175" y="280" class="function-title" font-size="12">Environment Data</text>
+
+  <rect x="300" y="250" width="150" height="50" class="topic"/>
+  <text x="375" y="280" class="function-title" font-size="12">Sensor Information</text>
+
+  <rect x="500" y="250" width="150" height="50" class="topic"/>
+  <text x="575" y="280" class="function-title" font-size="12">Location Updates</text>
+
+  <rect x="700" y="250" width="150" height="50" class="topic"/>
+  <text x="775" y="280" class="function-title" font-size="12">Safety Status</text>
+
+  <!-- Service Requests -->
+  <rect x="200" y="320" width="180" height="40" class="service"/>
+  <text x="290" y="340" class="function-title" font-size="12">Path Calculation Request</text>
+
+  <rect x="420" y="320" width="180" height="40" class="service"/>
+  <text x="510" y="340" class="function-title" font-size="12">Object Recognition Service</text>
+
+  <!-- Arrows showing communication -->
+  <!-- Vision to Sensor Fusion -->
+  <line x1="475" y1="140" x2="500" y2="140" class="arrow"/>
+  <text x="487" y="125" class="arrow-label">Share data</text>
+
+  <!-- Sensor Fusion to Decision Maker -->
+  <line x1="500" y1="120" x2="250" y2="120" class="arrow"/>
+  <text x="375" y="105" class="arrow-label">Unified view</text>
+
+  <!-- Decision Maker to Navigation -->
+  <line x1="150" y1="180" x2="375" y2="400" class="arrow"/>
+  <text x="250" y="280" class="arrow-label">Route request</text>
+
+  <!-- Vision to Topic -->
+  <line x1="375" y1="180" x2="375" y2="250" class="arrow"/>
+  <text x="390" y="210" class="arrow-label">Camera data</text>
+
+  <!-- Sensor Fusion to Topic -->
+  <line x1="600" y1="180" x2="575" y2="250" class="arrow"/>
+  <text x="610" y="210" class="arrow-label">Sensor fusion</text>
+
+  <!-- Topic to Navigation -->
+  <line x1="575" y1="300" x2="475" y2="400" class="arrow"/>
+  <text x="550" y="360" class="arrow-label">Location info</text>
+
+  <!-- Topic to Safety -->
+  <line x1="775" y1="300" x2="825" y2="180" class="arrow"/>
+  <text x="800" y="240" class="arrow-label">Status updates</text>
+
+  <!-- Service request from Navigation to Vision -->
+  <line x1="475" y1="400" x2="375" y2="360" class="arrow"/>
+  <text x="450" y="380" class="arrow-label">Request recognition</text>
+  <line x1="375" y1="360" x2="375" y2="180" class="arrow"/>
+
+  <!-- Motor Control receives from Navigation -->
+  <line x1="475" y1="440" x2="250" y2="440" class="arrow"/>
+  <text x="360" y="425" class="arrow-label">Movement commands</text>
+
+  <!-- Legend -->
+  <rect x="50" y="550" width="20" height="20" class="function"/>
+  <text x="80" y="565" class="legend-text">Robot Functions (Departments)</text>
+
+  <rect x="250" y="550" width="20" height="20" class="topic"/>
+  <text x="280" y="565" class="legend-text">Information Channels (Topics)</text>
+
+  <rect x="480" y="550" width="20" height="20" class="service"/>
+  <text x="510" y="565" class="legend-text">Request Centers (Services)</text>
+
+  <line x1="700" y1="560" x2="730" y2="560" class="arrow"/>
+  <text x="740" y="565" class="legend-text">Information Flow</text>
+</svg>

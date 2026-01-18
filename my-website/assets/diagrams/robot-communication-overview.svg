@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600">
+  <style>
+    .node { fill: #2E86AB; stroke: #1A5A7F; stroke-width: 2; rx: 10; ry: 10; }
+    .topic { fill: #A23B72; stroke: #7A2A56; stroke-width: 2; rx: 8; ry: 8; }
+    .service { fill: #F18F01; stroke: #B86B00; stroke-width: 2; rx: 8; ry: 8; }
+    .arrow { stroke: #333; stroke-width: 2; marker-end: url(#arrowhead); }
+    .text { fill: white; font-family: Arial, sans-serif; font-size: 14px; text-anchor: middle; dominant-baseline: middle; }
+    .label { fill: #333; font-family: Arial, sans-serif; font-size: 12px; text-anchor: middle; }
+  </style>
+
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7"
+      refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+    </marker>
+  </defs>
+
+  <!-- Robot Function Nodes -->
+  <rect x="100" y="100" width="150" height="60" class="node"/>
+  <text x="175" y="130" class="text">Navigation Department</text>
+
+  <rect x="100" y="200" width="150" height="60" class="node"/>
+  <text x="175" y="230" class="text">Vision Department</text>
+
+  <rect x="100" y="300" width="150" height="60" class="node"/>
+  <text x="175" y="330" class="text">Motor Control</text>
+
+  <rect x="100" y="400" width="150" height="60" class="node"/>
+  <text x="175" y="430" class="text">Safety Monitor</text>
+
+  <!-- Communication Channels (Topics) -->
+  <rect x="400" y="100" width="120" height="40" class="topic"/>
+  <text x="460" y="120" class="text" fill="white">Location Feed</text>
+
+  <rect x="400" y="180" width="120" height="40" class="topic"/>
+  <text x="460" y="200" class="text" fill="white">Camera Data</text>
+
+  <rect x="400" y="260" width="120" height="40" class="topic"/>
+  <text x="460" y="280" class="text" fill="white">Movement Cmds</text>
+
+  <rect x="400" y="340" width="120" height="40" class="topic"/>
+  <text x="460" y="360" class="text" fill="white">Safety Status</text>
+
+  <!-- Service Requests -->
+  <rect x="600" y="150" width="150" height="40" class="service"/>
+  <text x="675" y="170" class="text" fill="white">Path Calculation</text>
+
+  <rect x="600" y="250" width="150" height="40" class="service"/>
+  <text x="675" y="270" class="text" fill="white">Object Recognition</text>
+
+  <!-- Arrows showing communication -->
+  <!-- Navigation publishes to Location Feed -->
+  <line x1="250" y1="130" x2="400" y2="120" class="arrow"/>
+
+  <!-- Vision publishes to Camera Data -->
+  <line x1="250" y1="230" x2="400" y2="200" class="arrow"/>
+
+  <!-- Motor Control publishes to Movement Cmds -->
+  <line x1="250" y1="330" x2="400" y2="280" class="arrow"/>
+
+  <!-- Safety Monitor publishes to Safety Status -->
+  <line x1="250" y1="430" x2="400" y2="360" class="arrow"/>
+
+  <!-- Navigation requests Path Calculation -->
+  <line x1="250" y1="130" x2="600" y2="170" class="arrow"/>
+
+  <!-- Navigation subscribes to Camera Data -->
+  <line x1="460" y1="200" x2="250" y2="130" class="arrow"/>
+
+  <!-- Vision requests Object Recognition -->
+  <line x1="250" y1="230" x2="600" y2="270" class="arrow"/>
+
+  <!-- Labels -->
+  <text x="175" y="70" class="label">Robot Functions (Nodes)</text>
+  <text x="460" y="70" class="label">Information Channels (Topics)</text>
+  <text x="675" y="120" class="label">Request Centers (Services)</text>
+
+  <!-- Title -->
+  <text x="400" y="40" class="label" font-size="18" font-weight="bold">Robot Communication Overview</text>
+  <text x="400" y="60" class="label" font-size="14">Using Company Department Analogies</text>
+</svg>
