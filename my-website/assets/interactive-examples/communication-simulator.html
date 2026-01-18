@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robot Communication Simulator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2E86AB;
+            text-align: center;
+        }
+        .simulation-area {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        .node {
+            width: 150px;
+            height: 100px;
+            border: 2px solid #2E86AB;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #e6f2f7;
+            margin: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .node:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .node.active {
+            background-color: #2E86AB;
+            color: white;
+        }
+        .topic {
+            width: 120px;
+            height: 80px;
+            border: 2px solid #A23B72;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f7ebf0;
+            margin: 10px;
+            cursor: pointer;
+        }
+        .topic.active {
+            background-color: #A23B72;
+            color: white;
+        }
+        .service {
+            width: 150px;
+            height: 80px;
+            border: 2px solid #F18F01;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #fff7e8;
+            margin: 10px;
+            cursor: pointer;
+        }
+        .service.active {
+            background-color: #F18F01;
+            color: white;
+        }
+        .controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+        button {
+            background-color: #2E86AB;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #1A5A7F;
+        }
+        .message-log {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            height: 200px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+        }
+        .instructions {
+            background-color: #e6f7ff;
+            border-left: 4px solid #1890ff;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Robot Communication Simulator</h1>
+
+        <div class="instructions">
+            <p><strong>How to use:</strong> Click on robot functions (nodes) to simulate sending messages through topics or requesting services. Watch the message log to see how information flows between different parts of the robot!</p>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #2E86AB;"></div>
+                <span>Robot Functions (Nodes)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #A23B72;"></div>
+                <span>Information Channels (Topics)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #F18F01;"></div>
+                <span>Request Centers (Services)</span>
+            </div>
+        </div>
+
+        <div class="simulation-area">
+            <!-- Robot Functions (Nodes) -->
+            <div class="node" onclick="activateNode('Navigation')">
+                Navigation<br>Department
+            </div>
+            <div class="node" onclick="activateNode('Vision')">
+                Vision<br>Department
+            </div>
+            <div class="node" onclick="activateNode('Motor Control')">
+                Motor<br>Control
+            </div>
+            <div class="node" onclick="activateNode('Safety')">
+                Safety<br>Monitor
+            </div>
+        </div>
+
+        <div class="simulation-area">
+            <!-- Communication Channels (Topics) -->
+            <div class="topic" onclick="activateTopic('Location Feed')">
+                Location Feed
+            </div>
+            <div class="topic" onclick="activateTopic('Camera Data')">
+                Camera Data
+            </div>
+            <div class="topic" onclick="activateTopic('Movement Commands')">
+                Movement Cmds
+            </div>
+        </div>
+
+        <div class="simulation-area">
+            <!-- Services -->
+            <div class="service" onclick="activateService('Path Calculation')">
+                Path Calculation
+            </div>
+            <div class="service" onclick="activateService('Object Recognition')">
+                Object Recognition
+            </div>
+        </div>
+
+        <div class="controls">
+            <button onclick="clearLog()">Clear Log</button>
+            <button onclick="demoScenario()">Demo Scenario</button>
+        </div>
+
+        <div class="message-log" id="messageLog">
+            <p>Welcome to the Robot Communication Simulator!</p>
+            <p>Click on robot functions, topics, or services to see how information flows.</p>
+        </div>
+    </div>
+
+    <script>
+        let messageCount = 0;
+
+        function logMessage(message) {
+            const log = document.getElementById('messageLog');
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = document.createElement('p');
+            entry.innerHTML = `<small>[${timestamp}]</small> ${message}`;
+            entry.style.borderBottom = '1px solid #eee';
+            entry.style.padding = '5px 0';
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function activateNode(nodeName) {
+            // Highlight the node temporarily
+            const nodeElement = event.target.closest('.node');
+            nodeElement.classList.add('active');
+            setTimeout(() => {
+                nodeElement.classList.remove('active');
+            }, 500);
+
+            // Generate random communication
+            const actions = [
+                `Navigation Department: Publishing location update to Location Feed`,
+                `Vision Department: Publishing camera data to Camera Data channel`,
+                `Motor Control: Publishing movement status to Movement Commands`,
+                `Safety Monitor: Publishing safety status to relevant channels`
+            ];
+
+            logMessage(actions[Math.floor(Math.random() * actions.length)]);
+        }
+
+        function activateTopic(topicName) {
+            const topicElement = event.target.closest('.topic');
+            topicElement.classList.add('active');
+            setTimeout(() => {
+                topicElement.classList.remove('active');
+            }, 500);
+
+            logMessage(`${topicName}: Broadcasting information to subscribed functions`);
+        }
+
+        function activateService(serviceName) {
+            const serviceElement = event.target.closest('.service');
+            serviceElement.classList.add('active');
+            setTimeout(() => {
+                serviceElement.classList.remove('active');
+            }, 500);
+
+            logMessage(`Requesting service: ${serviceName}. Waiting for response...`);
+            setTimeout(() => {
+                logMessage(`Response received from ${serviceName}`);
+            }, 1500);
+        }
+
+        function clearLog() {
+            const log = document.getElementById('messageLog');
+            log.innerHTML = '<p>Message log cleared.</p>';
+        }
+
+        function demoScenario() {
+            clearLog();
+            logMessage('Starting demonstration scenario...');
+
+            setTimeout(() => logMessage('Navigation Department: Requesting path calculation'), 1000);
+            setTimeout(() => logMessage('Path Calculation Service: Processing request...'), 2000);
+            setTimeout(() => logMessage('Path Calculation Service: Path calculated and returned'), 3000);
+            setTimeout(() => logMessage('Navigation Department: Publishing movement commands to Motor Control'), 4000);
+            setTimeout(() => logMessage('Motor Control: Executing movement commands'), 5000);
+            setTimeout(() => logMessage('Vision Department: Monitoring environment for obstacles'), 6000);
+            setTimeout(() => logMessage('Vision Department: Publishing camera data to safety systems'), 7000);
+        }
+    </script>
+</body>
+</html>
