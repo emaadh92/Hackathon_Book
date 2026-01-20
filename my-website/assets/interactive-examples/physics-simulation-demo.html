@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physics Simulation Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #2e8555;
+            text-align: center;
+        }
+
+        .simulation-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        #simulationCanvas {
+            border: 2px solid #ddd;
+            background-color: #f8f9fa;
+            margin: 20px 0;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        button {
+            background-color: #2e8555;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: #216142;
+        }
+
+        .slider-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 10px;
+            width: 200px;
+        }
+
+        .slider-container label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .slider-container input {
+            width: 100%;
+        }
+
+        .info-panel {
+            background-color: #f0f8ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #2e8555;
+        }
+
+        .physics-properties {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .property-card {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            border-left: 3px solid #2e8555;
+        }
+
+        .status-display {
+            background-color: #e8f5e8;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Physics Simulation Demo</h1>
+
+        <div class="info-panel">
+            <p>This interactive demo shows how physics simulation works in digital twin environments.
+            Adjust the parameters to see how different physical properties affect robot behavior.</p>
+        </div>
+
+        <div class="simulation-container">
+            <canvas id="simulationCanvas" width="600" height="400"></canvas>
+
+            <div class="controls">
+                <button onclick="addBall()">Add Ball</button>
+                <button onclick="addBox()">Add Box</button>
+                <button onclick="addRobot()">Add Robot</button>
+                <button onclick="resetSimulation()">Reset</button>
+                <button onclick="togglePause()">Pause/Resume</button>
+            </div>
+
+            <div class="controls">
+                <div class="slider-container">
+                    <label for="gravitySlider">Gravity: <span id="gravityValue">0.5</span></label>
+                    <input type="range" id="gravitySlider" min="0" max="1" step="0.01" value="0.5">
+                </div>
+
+                <div class="slider-container">
+                    <label for="frictionSlider">Friction: <span id="frictionValue">0.1</span></label>
+                    <input type="range" id="frictionSlider" min="0" max="0.5" step="0.01" value="0.1">
+                </div>
+
+                <div class="slider-container">
+                    <label for="bounceSlider">Bounciness: <span id="bounceValue">0.7</span></label>
+                    <input type="range" id="bounceSlider" min="0" max="1" step="0.01" value="0.7">
+                </div>
+            </div>
+        </div>
+
+        <div class="physics-properties">
+            <div class="property-card">
+                <strong>Gravity</strong><br>
+                Force that pulls objects downward<br>
+                Simulates Earth's gravitational pull
+            </div>
+            <div class="property-card">
+                <strong>Friction</strong><br>
+                Resistance to motion<br>
+                Affects sliding and stopping
+            </div>
+            <div class="property-card">
+                <strong>Collision</strong><br>
+                Detection and response<br>
+                Objects can't pass through each other
+            </div>
+            <div class="property-card">
+                <strong>Momentum</strong><br>
+                Objects maintain motion<br>
+                Unless acted upon by forces
+            </div>
+        </div>
+
+        <div class="status-display" id="statusDisplay">
+            Physics simulation running with 0 objects
+        </div>
+
+        <div class="info-panel">
+            <h4>How Physics Simulation Works:</h4>
+            <ul>
+                <li><strong>Gravity:</strong> Pulls objects downward at a constant rate</li>
+                <li><strong>Collision Detection:</strong> Prevents objects from passing through each other</li>
+                <li><strong>Friction:</strong> Slows objects as they move across surfaces</li>
+                <li><strong>Inertia:</strong> Objects resist changes in motion</li>
+                <li><strong>Realistic Motion:</strong> Objects accelerate and decelerate naturally</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('simulationCanvas');
+        const ctx = canvas.getContext('2d');
+        const statusDisplay = document.getElementById('statusDisplay');
+
+        // Physics parameters
+        let gravity = 0.5;
+        let friction = 0.1;
+        let bounce = 0.7;
+        let paused = false;
+
+        // Simulation objects
+        let objects = [];
+        let nextId = 1;
+
+        // Object types
+        const OBJ_BALL = 'ball';
+        const OBJ_BOX = 'box';
+        const OBJ_ROBOT = 'robot';
+
+        // Update slider displays
+        document.getElementById('gravitySlider').addEventListener('input', function() {
+            gravity = parseFloat(this.value);
+            document.getElementById('gravityValue').textContent = gravity.toFixed(2);
+        });
+
+        document.getElementById('frictionSlider').addEventListener('input', function() {
+            friction = parseFloat(this.value);
+            document.getElementById('frictionValue').textContent = friction.toFixed(2);
+        });
+
+        document.getElementById('bounceSlider').addEventListener('input', function() {
+            bounce = parseFloat(this.value);
+            document.getElementById('bounceValue').textContent = bounce.toFixed(2);
+        });
+
+        // Create a ball object
+        function createBall(x, y) {
+            return {
+                id: nextId++,
+                type: OBJ_BALL,
+                x: x || Math.random() * (canvas.width - 40) + 20,
+                y: y || 50,
+                vx: (Math.random() - 0.5) * 4,
+                vy: 0,
+                radius: 15 + Math.random() * 10,
+                color: `hsl(${Math.random() * 360}, 70%, 60%)`,
+                draw: function() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+                    ctx.fill();
+                    ctx.strokeStyle = '#333';
+                    ctx.stroke();
+                }
+            };
+        }
+
+        // Create a box object
+        function createBox(x, y) {
+            return {
+                id: nextId++,
+                type: OBJ_BOX,
+                x: x || Math.random() * (canvas.width - 60) + 30,
+                y: y || 50,
+                width: 30 + Math.random() * 30,
+                height: 30 + Math.random() * 30,
+                vx: (Math.random() - 0.5) * 4,
+                vy: 0,
+                color: `hsl(${Math.random() * 360}, 70%, 60%)`,
+                draw: function() {
+                    ctx.fillStyle = this.color;
+                    ctx.fillRect(this.x - this.width/2, this.y - this.height/2, this.width, this.height);
+                    ctx.strokeStyle = '#333';
+                    ctx.strokeRect(this.x - this.width/2, this.y - this.height/2, this.width, this.height);
+                }
+            };
+        }
+
+        // Create a robot object
+        function createRobot(x, y) {
+            return {
+                id: nextId++,
+                type: OBJ_ROBOT,
+                x: x || Math.random() * (canvas.width - 60) + 30,
+                y: y || 50,
+                width: 40,
+                height: 50,
+                vx: (Math.random() - 0.5) * 2,
+                vy: 0,
+                color: '#4CAF50',
+                draw: function() {
+                    // Robot body
+                    ctx.fillStyle = this.color;
+                    ctx.fillRect(this.x - this.width/2, this.y - this.height/2, this.width, this.height);
+
+                    // Robot head
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y - this.height/2 - 10, 10, 0, Math.PI * 2);
+                    ctx.fillStyle = '#2196F3';
+                    ctx.fill();
+
+                    // Robot eyes
+                    ctx.beginPath();
+                    ctx.arc(this.x - 5, this.y - this.height/2 - 12, 2, 0, Math.PI * 2);
+                    ctx.arc(this.x + 5, this.y - this.height/2 - 12, 2, 0, Math.PI * 2);
+                    ctx.fillStyle = 'white';
+                    ctx.fill();
+
+                    ctx.strokeStyle = '#333';
+                    ctx.stroke();
+                }
+            };
+        }
+
+        // Add objects to simulation
+        function addBall() {
+            objects.push(createBall());
+            updateStatus();
+        }
+
+        function addBox() {
+            objects.push(createBox());
+            updateStatus();
+        }
+
+        function addRobot() {
+            objects.push(createRobot());
+            updateStatus();
+        }
+
+        // Reset simulation
+        function resetSimulation() {
+            objects = [];
+            nextId = 1;
+            updateStatus();
+        }
+
+        // Toggle pause
+        function togglePause() {
+            paused = !paused;
+        }
+
+        // Update status display
+        function updateStatus() {
+            statusDisplay.textContent = `Physics simulation running with ${objects.length} objects | Gravity: ${gravity} | Friction: ${friction} | Bounce: ${bounce}`;
+        }
+
+        // Apply physics to an object
+        function applyPhysics(obj) {
+            // Apply gravity
+            obj.vy += gravity;
+
+            // Apply friction (air resistance)
+            obj.vx *= (1 - friction * 0.1);
+            obj.vy *= (1 - friction * 0.1);
+
+            // Update position
+            obj.x += obj.vx;
+            obj.y += obj.vy;
+
+            // Boundary collision
+            if (obj.type === OBJ_BALL) {
+                // Ball boundaries
+                if (obj.x - obj.radius < 0) {
+                    obj.x = obj.radius;
+                    obj.vx = -obj.vx * bounce;
+                } else if (obj.x + obj.radius > canvas.width) {
+                    obj.x = canvas.width - obj.radius;
+                    obj.vx = -obj.vx * bounce;
+                }
+
+                if (obj.y - obj.radius < 0) {
+                    obj.y = obj.radius;
+                    obj.vy = -obj.vy * bounce;
+                } else if (obj.y + obj.radius > canvas.height) {
+                    obj.y = canvas.height - obj.radius;
+                    obj.vy = -obj.vy * bounce;
+                    obj.vx *= (1 - friction); // Ground friction
+                }
+            } else {
+                // Box and robot boundaries
+                if (obj.x - obj.width/2 < 0) {
+                    obj.x = obj.width/2;
+                    obj.vx = -obj.vx * bounce;
+                } else if (obj.x + obj.width/2 > canvas.width) {
+                    obj.x = canvas.width - obj.width/2;
+                    obj.vx = -obj.vx * bounce;
+                }
+
+                if (obj.y - obj.height/2 < 0) {
+                    obj.y = obj.height/2;
+                    obj.vy = -obj.vy * bounce;
+                } else if (obj.y + obj.height/2 > canvas.height) {
+                    obj.y = canvas.height - obj.height/2;
+                    obj.vy = -obj.vy * bounce;
+                    obj.vx *= (1 - friction); // Ground friction
+                }
+            }
+
+            // Simple object-object collision (simplified)
+            for (let other of objects) {
+                if (other.id !== obj.id) {
+                    let dx = obj.x - other.x;
+                    let dy = obj.y - other.y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < (obj.radius || Math.max(obj.width, obj.height)/2) + (other.radius || Math.max(other.width, other.height)/2)) {
+                        // Simple elastic collision response
+                        let angle = Math.atan2(dy, dx);
+                        let sin = Math.sin(angle);
+                        let cos = Math.cos(angle);
+
+                        // Rotate velocity vectors
+                        let vx1 = obj.vx * cos + obj.vy * sin;
+                        let vy1 = obj.vy * cos - obj.vx * sin;
+                        let vx2 = other.vx * cos + other.vy * sin;
+                        let vy2 = other.vy * cos - other.vx * sin;
+
+                        // Collision reaction (simplified)
+                        let finalVx1 = ((obj.radius || 1) - (other.radius || 1)) * vx1 + (2 * (other.radius || 1)) * vx2 / ((obj.radius || 1) + (other.radius || 1));
+                        let finalVx2 = (2 * (obj.radius || 1)) * vx1 + ((other.radius || 1) - (obj.radius || 1)) * vx2 / ((obj.radius || 1) + (other.radius || 1));
+
+                        // Update velocities
+                        obj.vx = finalVx1 * cos - vy1 * sin;
+                        obj.vy = vy1 * cos + finalVx1 * sin;
+                        other.vx = finalVx2 * cos - vy2 * sin;
+                        other.vy = vy2 * cos + finalVx2 * sin;
+                    }
+                }
+            }
+        }
+
+        // Animation loop
+        function animate() {
+            if (!paused) {
+                // Clear canvas
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Draw floor
+                ctx.fillStyle = '#8B4513';
+                ctx.fillRect(0, canvas.height - 10, canvas.width, 10);
+
+                // Update and draw objects
+                for (let obj of objects) {
+                    applyPhysics(obj);
+                    obj.draw();
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        // Start animation
+        animate();
+
+        // Initial status update
+        updateStatus();
+    </script>
+</body>
+</html>

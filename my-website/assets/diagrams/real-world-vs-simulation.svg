@@ -1,0 +1,84 @@
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="100%" height="100%" fill="#f8f9fa"/>
+
+  <!-- Real World Section -->
+  <rect x="50" y="50" width="300" height="250" fill="#e9ecef" stroke="#adb5bd" stroke-width="2" rx="10"/>
+  <text x="200" y="80" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle">Real World</text>
+
+  <!-- Real robot -->
+  <rect x="120" y="120" width="160" height="100" fill="#007bff" stroke="#0056b3" stroke-width="2" rx="5"/>
+  <circle cx="150" cy="150" r="12" fill="#fff"/>
+  <circle cx="250" cy="150" r="12" fill="#fff"/>
+  <rect x="140" y="220" width="25" height="40" fill="#6c757d"/>
+  <rect x="235" y="220" width="25" height="40" fill="#6c757d"/>
+
+  <!-- Real environment -->
+  <rect x="80" y="280" width="240" height="20" fill="#28a745"/>
+  <rect x="90" y="180" width="40" height="120" fill="#6f42c1"/>
+  <rect x="270" y="160" width="30" height="140" fill="#6f42c1"/>
+
+  <!-- Real world caption -->
+  <text x="200" y="320" font-family="Arial" font-size="12" text-anchor="middle" fill="#495057">
+    Physical robot in real environment
+  </text>
+  <text x="200" y="340" font-family="Arial" font-size="12" text-anchor="middle" fill="#495057">
+    (Risk of damage, costly to test)
+  </text>
+
+  <!-- Simulation World Section -->
+  <rect x="450" y="50" width="300" height="250" fill="#e8f4fd" stroke="#28a745" stroke-width="2" rx="10"/>
+  <text x="600" y="80" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle">Virtual Simulation</text>
+
+  <!-- Digital twin -->
+  <rect x="520" y="120" width="160" height="100" fill="#28a745" stroke="#1e7e34" stroke-width="2" rx="5"/>
+  <circle cx="550" cy="150" r="12" fill="#fff"/>
+  <circle cx="650" cy="150" r="12" fill="#fff"/>
+  <rect x="540" y="220" width="25" height="40" fill="#6c757d"/>
+  <rect x="635" y="220" width="25" height="40" fill="#6c757d"/>
+
+  <!-- Virtual environment -->
+  <rect x="480" y="280" width="240" height="20" fill="#20c997"/>
+  <rect x="490" y="180" width="40" height="120" fill="#e83e8c"/>
+  <rect x="670" y="160" width="30" height="140" fill="#e83e8c"/>
+
+  <!-- Simulation caption -->
+  <text x="600" y="320" font-family="Arial" font-size="12" text-anchor="middle" fill="#495057">
+    Digital twin in virtual environment
+  </text>
+  <text x="600" y="340" font-family="Arial" font-size="12" text-anchor="middle" fill="#495057">
+    (Safe testing, rapid iteration)
+  </text>
+
+  <!-- Physics Comparison Section -->
+  <rect x="50" y="350" width="700" height="200" fill="#ffffff" stroke="#6c757d" stroke-width="1" rx="5"/>
+  <text x="400" y="375" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle">Physics Simulation Comparison</text>
+
+  <!-- Real Physics -->
+  <rect x="80" y="400" width="250" height="130" fill="#f8d7da" stroke="#dc3545" stroke-width="1" rx="5"/>
+  <text x="205" y="420" font-family="Arial" font-size="13" font-weight="bold" text-anchor="middle">Real Physics</text>
+  <text x="90" y="445" font-family="Arial" font-size="11">• Gravity: 9.8 m/s²</text>
+  <text x="90" y="465" font-family="Arial" font-size="11">• Friction: Real materials</text>
+  <text x="90" y="485" font-family="Arial" font-size="11">• Collisions: Physical impact</text>
+  <text x="90" y="505" font-family="Arial" font-size="11">• Risk: Physical damage possible</text>
+
+  <!-- Virtual Physics -->
+  <rect x="420" y="400" width="250" height="130" fill="#d4edda" stroke="#28a745" stroke-width="1" rx="5"/>
+  <text x="545" y="420" font-family="Arial" font-size="13" font-weight="bold" text-anchor="middle">Virtual Physics</text>
+  <text x="430" y="445" font-family="Arial" font-size="11">• Gravity: Simulated (9.8 m/s²)</text>
+  <text x="430" y="465" font-family="Arial" font-size="11">• Friction: Calculated mathematically</text>
+  <text x="430" y="485" font-family="Arial" font-size="11">• Collisions: Detection algorithms</text>
+  <text x="430" y="505" font-family="Arial" font-size="11">• Risk: No physical damage</text>
+
+  <!-- Connection arrows -->
+  <line x1="200" y1="340" x2="200" y2="350" stroke="#28a745" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="600" y1="340" x2="600" y2="350" stroke="#28a745" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+  <!-- Arrow definition -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7"
+      refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#28a745"/>
+    </marker>
+  </defs>
+</svg>

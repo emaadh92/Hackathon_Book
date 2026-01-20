@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Human-Robot Interaction Simulation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #2e8555;
+            text-align: center;
+        }
+
+        .simulation-area {
+            position: relative;
+            width: 800px;
+            height: 500px;
+            margin: 20px auto;
+            border: 2px solid #ddd;
+            background: linear-gradient(to bottom, #87CEEB 0%, #87CEEB 70%, #90EE90 70%, #90EE90 100%);
+            overflow: hidden;
+        }
+
+        .robot {
+            position: absolute;
+            width: 60px;
+            height: 80px;
+            background-color: #4CAF50;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            z-index: 10;
+        }
+
+        .robot-head {
+            width: 30px;
+            height: 30px;
+            background-color: #2196F3;
+            border-radius: 50%;
+            margin-bottom: 5px;
+            position: relative;
+        }
+
+        .robot-eye {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background-color: white;
+            border-radius: 50%;
+        }
+
+        .left-eye {
+            top: 8px;
+            left: 6px;
+        }
+
+        .right-eye {
+            top: 8px;
+            right: 6px;
+        }
+
+        .human {
+            position: absolute;
+            width: 50px;
+            height: 70px;
+            background-color: #FF9800;
+            border-radius: 25px 25px 10px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            z-index: 5;
+        }
+
+        .human-head {
+            width: 25px;
+            height: 25px;
+            background-color: #FFCCBC;
+            border-radius: 50%;
+            margin-bottom: 5px;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        button {
+            background-color: #2e8555;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: #216142;
+        }
+
+        .scenario-selector {
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .interaction-log {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            height: 150px;
+            overflow-y: auto;
+            font-family: monospace;
+            border: 1px solid #ddd;
+        }
+
+        .info-panel {
+            background-color: #f0f8ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #2e8555;
+        }
+
+        .behavior-indicator {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            margin: 0 2px;
+        }
+
+        .friendly { background-color: #d4edda; color: #155724; }
+        .cautious { background-color: #fff3cd; color: #856404; }
+        .alert { background-color: #f8d7da; color: #721c24; }
+        .neutral { background-color: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Human-Robot Interaction Simulation</h1>
+
+        <div class="info-panel">
+            <p>This simulation demonstrates how humans and robots can interact safely in digital environments.
+            Watch how the robot perceives and responds to human presence and actions.</p>
+        </div>
+
+        <div class="scenario-selector">
+            <label for="scenarioSelect">Choose Interaction Scenario:</label>
+            <select id="scenarioSelect">
+                <option value="greeting">Friendly Greeting</option>
+                <option value="navigation">Navigation Assistance</option>
+                <option value="collaboration">Collaborative Task</option>
+                <option value="emergency">Emergency Response</option>
+            </select>
+        </div>
+
+        <div class="simulation-area" id="simulationArea">
+            <!-- Robot and human will be positioned by JavaScript -->
+        </div>
+
+        <div class="controls">
+            <button onclick="moveRobotRandomly()">Move Robot</button>
+            <button onclick="moveHumanRandomly()">Move Human</button>
+            <button onclick="simulateInteraction()">Simulate Interaction</button>
+            <button onclick="startDemo()">Start Demo</button>
+            <button onclick="stopDemo()">Stop Demo</button>
+        </div>
+
+        <div class="interaction-log" id="interactionLog">
+            Interaction log will appear here...
+        </div>
+
+        <div class="info-panel">
+            <h4>Key Aspects of Human-Robot Interaction:</h4>
+            <ul>
+                <li><strong>Safety First:</strong> Robots maintain safe distances from humans</li>
+                <li><strong>Natural Behavior:</strong> Robots follow social conventions</li>
+                <li><strong>Clear Communication:</strong> Robot intentions are visible to humans</li>
+                <li><strong>Adaptive Response:</strong> Robots adjust behavior based on human actions</li>
+                <li><strong>Trust Building:</strong> Predictable behavior increases human confidence</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const simulationArea = document.getElementById('simulationArea');
+        const interactionLog = document.getElementById('interactionLog');
+        const scenarioSelect = document.getElementById('scenarioSelect');
+
+        // Robot and human objects
+        let robot = {
+            x: 100,
+            y: 200,
+            element: null
+        };
+
+        let human = {
+            x: 600,
+            y: 300,
+            element: null
+        };
+
+        let demoInterval = null;
+        let robotMoving = false;
+        let humanMoving = false;
+
+        // Initialize the simulation
+        function initSimulation() {
+            // Create robot element
+            robot.element = document.createElement('div');
+            robot.element.className = 'robot';
+            robot.element.innerHTML = `
+                <div class="robot-head">
+                    <div class="robot-eye left-eye"></div>
+                    <div class="robot-eye right-eye"></div>
+                </div>
+                ROBOT
+            `;
+            robot.element.style.left = robot.x + 'px';
+            robot.element.style.top = robot.y + 'px';
+            simulationArea.appendChild(robot.element);
+
+            // Create human element
+            human.element = document.createElement('div');
+            human.element.className = 'human';
+            human.element.innerHTML = `
+                <div class="human-head"></div>
+                HUMAN
+            `;
+            human.element.style.left = human.x + 'px';
+            human.element.style.top = human.y + 'px';
+            simulationArea.appendChild(human.element);
+
+            logInteraction("Simulation initialized with robot and human.");
+        }
+
+        // Move robot to new position
+        function moveRobot(x, y) {
+            robot.x = Math.max(30, Math.min(simulationArea.offsetWidth - 90, x));
+            robot.y = Math.max(40, Math.min(simulationArea.offsetHeight - 120, y));
+            robot.element.style.left = robot.x + 'px';
+            robot.element.style.top = robot.y + 'px';
+
+            checkProximity();
+        }
+
+        // Move human to new position
+        function moveHuman(x, y) {
+            human.x = Math.max(25, Math.min(simulationArea.offsetWidth - 75, x));
+            human.y = Math.max(35, Math.min(simulationArea.offsetHeight - 105, y));
+            human.element.style.left = human.x + 'px';
+            human.element.style.top = human.y + 'px';
+
+            checkProximity();
+        }
+
+        // Check proximity between robot and human
+        function checkProximity() {
+            const dx = robot.x - human.x;
+            const dy = robot.y - human.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < 80) {
+                logInteraction(`⚠️ Close proximity detected! Distance: ${Math.round(distance)}px`);
+
+                // Robot behavior based on proximity
+                if (distance < 50) {
+                    logInteraction(`<span class="behavior-indicator alert">ALERT</span> Robot entering caution mode`);
+                    robot.element.style.backgroundColor = '#f44336';
+                } else if (distance < 80) {
+                    logInteraction(`<span class="behavior-indicator cautious">CAUTIOUS</span> Robot maintaining safe distance`);
+                    robot.element.style.backgroundColor = '#FF9800';
+                }
+            } else if (distance < 150) {
+                logInteraction(`<span class="behavior-indicator neutral">NEUTRAL</span> Normal operation, monitoring human`);
+                robot.element.style.backgroundColor = '#4CAF50';
+            } else {
+                logInteraction(`<span class="behavior-indicator friendly">FRIENDLY</span> Safe distance maintained`);
+                robot.element.style.backgroundColor = '#4CAF50';
+            }
+        }
+
+        // Move robot to random position
+        function moveRobotRandomly() {
+            const newX = Math.random() * (simulationArea.offsetWidth - 90);
+            const newY = Math.random() * (simulationArea.offsetHeight - 120);
+            moveRobot(newX, newY);
+        }
+
+        // Move human to random position
+        function moveHumanRandomly() {
+            const newX = Math.random() * (simulationArea.offsetWidth - 75);
+            const newY = Math.random() * (simulationArea.offsetHeight - 105);
+            moveHuman(newX, newY);
+        }
+
+        // Simulate interaction based on scenario
+        function simulateInteraction() {
+            const scenario = scenarioSelect.value;
+
+            switch(scenario) {
+                case 'greeting':
+                    logInteraction(`🤖 Initiating friendly greeting protocol...`);
+                    logInteraction(`💬 Robot: "Hello! How can I assist you today?"`);
+                    logInteraction(`👁️ Robot establishing eye contact`);
+                    break;
+
+                case 'navigation':
+                    logInteraction(`🧭 Robot offering navigation assistance...`);
+                    logInteraction(`📍 Human requests directions to the exit`);
+                    logInteraction(`🚶‍♂️ Robot guides human to nearest exit safely`);
+                    break;
+
+                case 'collaboration':
+                    logInteraction(`🤝 Beginning collaborative task with human...`);
+                    logInteraction(`📦 Robot: "Let me help you carry that heavy box"`);
+                    logInteraction(`🤝 Both working together efficiently`);
+                    break;
+
+                case 'emergency':
+                    logInteraction(`🚨 Emergency response protocol activated!`);
+                    logInteraction(`🚨 Robot: "Please follow me to the safe zone!"`);
+                    logInteraction(`🏃‍♂️ Robot leading human to safety`);
+                    break;
+            }
+        }
+
+        // Log interaction to the display
+        function logInteraction(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.innerHTML = `<small>[${timestamp}]</small> ${message}`;
+            interactionLog.appendChild(entry);
+            interactionLog.scrollTop = interactionLog.scrollHeight;
+        }
+
+        // Start automated demo
+        function startDemo() {
+            if (demoInterval) return;
+
+            demoInterval = setInterval(() => {
+                // Randomly decide to move either robot or human
+                if (Math.random() > 0.5) {
+                    moveRobotRandomly();
+                } else {
+                    moveHumanRandomly();
+                }
+
+                // Occasionally simulate an interaction
+                if (Math.random() > 0.8) {
+                    simulateInteraction();
+                }
+            }, 2000);
+
+            logInteraction("Demo started - automatic movement and interaction simulation");
+        }
+
+        // Stop automated demo
+        function stopDemo() {
+            if (demoInterval) {
+                clearInterval(demoInterval);
+                demoInterval = null;
+                logInteraction("Demo stopped");
+            }
+        }
+
+        // Initialize the simulation when page loads
+        window.onload = function() {
+            initSimulation();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<svg width="900" height="600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="100%" height="100%" fill="#f8f9fa"/>
+
+  <!-- Title -->
+  <text x="450" y="40" text-anchor="middle" font-size="20" font-weight="bold" fill="#212529">Visual SLAM (VSLAM) Process</text>
+
+  <!-- Robot representation -->
+  <circle cx="100" cy="100" r="30" fill="#17a2b8" stroke="#0d6efd" stroke-width="3"/>
+  <text x="100" y="135" text-anchor="middle" font-size="14" fill="#212529">Robot</text>
+
+  <!-- Camera feed -->
+  <line x1="130" y1="90" x2="200" y2="60" stroke="#28a745" stroke-width="2" stroke-dasharray="5,5"/>
+  <text x="165" y="55" font-size="12" fill="#212529">Camera</text>
+
+  <!-- Environment -->
+  <rect x="250" y="50" width="500" height="400" fill="#e9ecef" stroke="#6c757d" stroke-width="2"/>
+  <text x="500" y="470" text-anchor="middle" font-size="14" fill="#212529">Environment</text>
+
+  <!-- Objects in environment -->
+  <rect x="350" y="150" width="40" height="80" fill="#6c757d" stroke="#495057" stroke-width="1"/>
+  <rect x="550" y="200" width="60" height="120" fill="#6c757d" stroke="#495057" stroke-width="1"/>
+  <circle cx="650" cy="300" r="25" fill="#6c757d" stroke="#495057" stroke-width="1"/>
+
+  <!-- Robot trajectory -->
+  <path d="M100,100 C150,80 200,90 250,100 C300,110 350,130 400,140 C450,150 500,160 550,170 C600,180 650,190 700,200"
+        fill="none" stroke="#ffc107" stroke-width="3" stroke-dasharray="5,5"/>
+  <text x="400" y="80" text-anchor="middle" font-size="12" fill="#212529">Robot Path</text>
+
+  <!-- Process Steps -->
+  <g transform="translate(50, 250)">
+    <!-- Step 1: Feature Detection -->
+    <rect x="0" y="0" width="150" height="60" fill="#d1ecf1" stroke="#0c5460" stroke-width="2" rx="5"/>
+    <text x="75" y="20" text-anchor="middle" font-size="12" font-weight="bold" fill="#0c5460">Step 1</text>
+    <text x="75" y="35" text-anchor="middle" font-size="11" fill="#0c5460">Feature</text>
+    <text x="75" y="50" text-anchor="middle" font-size="11" fill="#0c5460">Detection</text>
+
+    <!-- Step 2: Feature Tracking -->
+    <rect x="0" y="80" width="150" height="60" fill="#d1ecf1" stroke="#0c5460" stroke-width="2" rx="5"/>
+    <text x="75" y="100" text-anchor="middle" font-size="12" font-weight="bold" fill="#0c5460">Step 2</text>
+    <text x="75" y="115" text-anchor="middle" font-size="11" fill="#0c5460">Feature</text>
+    <text x="75" y="130" text-anchor="middle" font-size="11" fill="#0c5460">Tracking</text>
+
+    <!-- Step 3: Motion Estimation -->
+    <rect x="0" y="160" width="150" height="60" fill="#d1ecf1" stroke="#0c5460" stroke-width="2" rx="5"/>
+    <text x="75" y="180" text-anchor="middle" font-size="12" font-weight="bold" fill="#0c5460">Step 3</text>
+    <text x="75" y="195" text-anchor="middle" font-size="11" fill="#0c5460">Motion</text>
+    <text x="75" y="210" text-anchor="middle" font-size="11" fill="#0c5460">Estimation</text>
+
+    <!-- Step 4: Map Building -->
+    <rect x="0" y="240" width="150" height="60" fill="#d1ecf1" stroke="#0c5460" stroke-width="2" rx="5"/>
+    <text x="75" y="260" text-anchor="middle" font-size="12" font-weight="bold" fill="#0c5460">Step 4</text>
+    <text x="75" y="275" text-anchor="middle" font-size="11" fill="#0c5460">Map</text>
+    <text x="75" y="290" text-anchor="middle" font-size="11" fill="#0c5460">Building</text>
+  </g>
+
+  <!-- SLAM Loop -->
+  <g transform="translate(250, 500)">
+    <rect x="0" y="0" width="400" height="80" fill="#f8d7da" stroke="#842029" stroke-width="2" rx="10"/>
+    <text x="200" y="25" text-anchor="middle" font-size="14" font-weight="bold" fill="#842029">SLAM Loop</text>
+    <text x="200" y="45" text-anchor="middle" font-size="12" fill="#842029">Simultaneous Localization</text>
+    <text x="200" y="65" text-anchor="middle" font-size="12" fill="#842029">&amp; Mapping</text>
+  </g>
+
+  <!-- Arrows showing process flow -->
+  <line x1="150" y1="280" x2="240" y2="100" stroke="#28a745" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="150" y1="360" x2="240" y2="200" stroke="#28a745" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="150" y1="440" x2="240" y2="300" stroke="#28a745" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="150" y1="520" x2="240" y2="400" stroke="#28a745" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+  <line x1="450" y1="400" x2="450" y2="500" stroke="#dc3545" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="450" y1="580" x2="450" y2="480" stroke="#dc3545" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+  <!-- Isaac ROS Acceleration Box -->
+  <g transform="translate(600, 250)">
+    <rect x="0" y="0" width="200" height="100" fill="#d4edda" stroke="#155724" stroke-width="2" rx="10"/>
+    <text x="100" y="25" text-anchor="middle" font-size="14" font-weight="bold" fill="#155724">Isaac ROS</text>
+    <text x="100" y="45" text-anchor="middle" font-size="12" fill="#155724">Hardware</text>
+    <text x="100" y="65" text-anchor="middle" font-size="12" fill="#155724">Acceleration</text>
+    <text x="100" y="85" text-anchor="middle" font-size="11" fill="#155724">GPU Computing</text>
+  </g>
+
+  <!-- Arrows from Isaac ROS to process -->
+  <line x1="600" y1="300" x2="160" y2="300" stroke="#fd7e14" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#arrowhead)"/>
+
+  <!-- Legend -->
+  <g transform="translate(50, 550)">
+    <rect x="0" y="0" width="15" height="15" fill="#28a745"/>
+    <text x="20" y="12" font-size="12" fill="#212529">Data Flow</text>
+
+    <rect x="100" y="0" width="15" height="15" fill="#dc3545"/>
+    <text x="120" y="12" font-size="12" fill="#212529">Feedback Loop</text>
+
+    <rect x="220" y="0" width="15" height="15" fill="#fd7e14"/>
+    <text x="240" y="12" font-size="12" fill="#212529">Acceleration</text>
+  </g>
+
+  <!-- Arrowhead definition -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#6c757d"/>
+    </marker>
+  </defs>
+</svg>

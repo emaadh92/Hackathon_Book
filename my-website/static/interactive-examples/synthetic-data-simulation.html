@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Synthetic Data Generation Simulator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .simulation-area {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .real-world, .synthetic-data {
+            flex: 1;
+            min-width: 300px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+        }
+        .real-world {
+            border-color: #28a745;
+        }
+        .synthetic-data {
+            border-color: #ffc107;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .real-world .section-title {
+            color: #28a745;
+        }
+        .synthetic-data .section-title {
+            color: #ffc107;
+        }
+        canvas {
+            width: 100%;
+            height: 200px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+        .data-output {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .stat-box {
+            padding: 10px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            min-width: 120px;
+        }
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Synthetic Data Generation Simulator</h1>
+
+        <div class="controls">
+            <button onclick="generateRealWorldData()">Capture Real Data</button>
+            <button onclick="generateSyntheticData()">Generate Synthetic Data</button>
+            <button onclick="resetSimulation()">Reset</button>
+        </div>
+
+        <div class="simulation-area">
+            <div class="real-world">
+                <div class="section-title">Real World Data</div>
+                <canvas id="realCanvas"></canvas>
+                <div class="data-output" id="realDataOutput">No data captured yet</div>
+            </div>
+
+            <div class="synthetic-data">
+                <div class="section-title">Synthetic Data</div>
+                <canvas id="syntheticCanvas"></canvas>
+                <div class="data-output" id="syntheticDataOutput">No synthetic data generated yet</div>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-value" id="realCount">0</div>
+                <div>Real Samples</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="syntheticCount">0</div>
+                <div>Synthetic Samples</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="qualityRatio">0%</div>
+                <div>Quality Ratio</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let realCount = 0;
+        let syntheticCount = 0;
+
+        // Initialize canvases
+        const realCanvas = document.getElementById('realCanvas');
+        const syntheticCanvas = document.getElementById('syntheticCanvas');
+        const realCtx = realCanvas.getContext('2d');
+        const syntheticCtx = syntheticCanvas.getContext('2d');
+
+        // Set canvas dimensions
+        realCanvas.width = realCanvas.offsetWidth;
+        realCanvas.height = realCanvas.offsetHeight;
+        syntheticCanvas.width = syntheticCanvas.offsetWidth;
+        syntheticCanvas.height = syntheticCanvas.offsetHeight;
+
+        function drawScene(ctx, isSynthetic = false) {
+            // Clear canvas
+            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+            // Draw floor
+            ctx.fillStyle = isSynthetic ? '#e3f2fd' : '#f5f5f5';
+            ctx.fillRect(0, ctx.canvas.height - 40, ctx.canvas.width, 40);
+
+            // Draw a simple robot
+            const robotColor = isSynthetic ? '#1976d2' : '#4caf50';
+            ctx.fillStyle = robotColor;
+            ctx.fillRect(ctx.canvas.width/2 - 20, ctx.canvas.height - 80, 40, 40);
+
+            // Draw sensor beams
+            ctx.strokeStyle = isSynthetic ? '#ffb74d' : '#ff9800';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(ctx.canvas.width/2, ctx.canvas.height - 80);
+            ctx.lineTo(ctx.canvas.width/2 - 50, ctx.canvas.height - 150);
+            ctx.lineTo(ctx.canvas.width/2 + 50, ctx.canvas.height - 150);
+            ctx.closePath();
+            ctx.stroke();
+
+            // Draw obstacles
+            ctx.fillStyle = isSynthetic ? '#f44336' : '#795548';
+            ctx.fillRect(ctx.canvas.width/2 - 100, ctx.canvas.height - 60, 20, 20);
+            ctx.fillRect(ctx.canvas.width/2 + 80, ctx.canvas.height - 100, 15, 40);
+        }
+
+        function generateRealWorldData() {
+            realCount++;
+            document.getElementById('realCount').textContent = realCount;
+
+            // Draw real world scene
+            drawScene(realCtx, false);
+
+            // Simulate real data capture
+            const output = document.getElementById('realDataOutput');
+            output.innerHTML += `<div>Sample ${realCount}: RGB image, Depth map, Object labels</div>`;
+            output.scrollTop = output.scrollHeight;
+        }
+
+        function generateSyntheticData() {
+            syntheticCount++;
+            document.getElementById('syntheticCount').textContent = syntheticCount;
+
+            // Draw synthetic scene
+            drawScene(syntheticCtx, true);
+
+            // Simulate synthetic data generation
+            const output = document.getElementById('syntheticDataOutput');
+            output.innerHTML += `<div>Synthetic ${syntheticCount}: Perfect RGB, Accurate depth, Pixel-perfect labels</div>`;
+            output.scrollTop = output.scrollHeight;
+
+            // Update quality ratio
+            updateQualityRatio();
+        }
+
+        function updateQualityRatio() {
+            const ratio = realCount > 0 ? Math.round((syntheticCount / realCount) * 100) : 0;
+            document.getElementById('qualityRatio').textContent = `${ratio}%`;
+        }
+
+        function resetSimulation() {
+            realCount = 0;
+            syntheticCount = 0;
+            document.getElementById('realCount').textContent = '0';
+            document.getElementById('syntheticCount').textContent = '0';
+            document.getElementById('qualityRatio').textContent = '0%';
+            document.getElementById('realDataOutput').innerHTML = 'No data captured yet';
+            document.getElementById('syntheticDataOutput').innerHTML = 'No synthetic data generated yet';
+
+            realCtx.clearRect(0, 0, realCanvas.width, realCanvas.height);
+            syntheticCtx.clearRect(0, 0, syntheticCanvas.width, syntheticCanvas.height);
+        }
+
+        // Initialize canvases with default scenes
+        drawScene(realCtx, false);
+        drawScene(syntheticCtx, true);
+    </script>
+</body>
+</html>

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Robot Communication Simulator</title>
+    <meta name="description" content="Interactive simulation demonstrating robot communication using topics, services, and nodes with company department analogies">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -134,7 +135,7 @@
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container" role="main">
         <h1>Robot Communication Simulator</h1>
 
         <div class="instructions">
@@ -156,51 +157,51 @@
             </div>
         </div>
 
-        <div class="simulation-area">
+        <div class="simulation-area" aria-label="Robot Functions (Nodes)">
             <!-- Robot Functions (Nodes) -->
-            <div class="node" onclick="activateNode('Navigation')">
+            <div class="node" onclick="activateNode('Navigation')" role="button" tabindex="0" aria-label="Navigation Department - Robot function">
                 Navigation<br>Department
             </div>
-            <div class="node" onclick="activateNode('Vision')">
+            <div class="node" onclick="activateNode('Vision')" role="button" tabindex="0" aria-label="Vision Department - Robot function">
                 Vision<br>Department
             </div>
-            <div class="node" onclick="activateNode('Motor Control')">
+            <div class="node" onclick="activateNode('Motor Control')" role="button" tabindex="0" aria-label="Motor Control - Robot function">
                 Motor<br>Control
             </div>
-            <div class="node" onclick="activateNode('Safety')">
+            <div class="node" onclick="activateNode('Safety')" role="button" tabindex="0" aria-label="Safety Monitor - Robot function">
                 Safety<br>Monitor
             </div>
         </div>
 
-        <div class="simulation-area">
+        <div class="simulation-area" aria-label="Communication Channels (Topics)">
             <!-- Communication Channels (Topics) -->
-            <div class="topic" onclick="activateTopic('Location Feed')">
+            <div class="topic" onclick="activateTopic('Location Feed')" role="button" tabindex="0" aria-label="Location Feed - Information channel">
                 Location Feed
             </div>
-            <div class="topic" onclick="activateTopic('Camera Data')">
+            <div class="topic" onclick="activateTopic('Camera Data')" role="button" tabindex="0" aria-label="Camera Data - Information channel">
                 Camera Data
             </div>
-            <div class="topic" onclick="activateTopic('Movement Commands')">
+            <div class="topic" onclick="activateTopic('Movement Commands')" role="button" tabindex="0" aria-label="Movement Commands - Information channel">
                 Movement Cmds
             </div>
         </div>
 
-        <div class="simulation-area">
+        <div class="simulation-area" aria-label="Request Centers (Services)">
             <!-- Services -->
-            <div class="service" onclick="activateService('Path Calculation')">
+            <div class="service" onclick="activateService('Path Calculation')" role="button" tabindex="0" aria-label="Path Calculation - Request service">
                 Path Calculation
             </div>
-            <div class="service" onclick="activateService('Object Recognition')">
+            <div class="service" onclick="activateService('Object Recognition')" role="button" tabindex="0" aria-label="Object Recognition - Request service">
                 Object Recognition
             </div>
         </div>
 
-        <div class="controls">
-            <button onclick="clearLog()">Clear Log</button>
-            <button onclick="demoScenario()">Demo Scenario</button>
+        <div class="controls" role="toolbar" aria-label="Simulation controls">
+            <button onclick="clearLog()" aria-label="Clear message log">Clear Log</button>
+            <button onclick="demoScenario()" aria-label="Run demonstration scenario">Demo Scenario</button>
         </div>
 
-        <div class="message-log" id="messageLog">
+        <div class="message-log" id="messageLog" role="log" aria-live="polite" aria-label="Message log">
             <p>Welcome to the Robot Communication Simulator!</p>
             <p>Click on robot functions, topics, or services to see how information flows.</p>
         </div>
@@ -222,11 +223,20 @@
 
         function activateNode(nodeName) {
             // Highlight the node temporarily
-            const nodeElement = event.target.closest('.node');
-            nodeElement.classList.add('active');
-            setTimeout(() => {
-                nodeElement.classList.remove('active');
-            }, 500);
+            let nodeElement;
+            if (event && event.target) {
+                nodeElement = event.target.closest('.node');
+            } else {
+                // For keyboard accessibility - find element by name
+                nodeElement = document.querySelector(`.node[aria-label*="${nodeName}"]`);
+            }
+
+            if (nodeElement) {
+                nodeElement.classList.add('active');
+                setTimeout(() => {
+                    nodeElement.classList.remove('active');
+                }, 500);
+            }
 
             // Generate random communication
             const actions = [
@@ -240,27 +250,69 @@
         }
 
         function activateTopic(topicName) {
-            const topicElement = event.target.closest('.topic');
-            topicElement.classList.add('active');
-            setTimeout(() => {
-                topicElement.classList.remove('active');
-            }, 500);
+            let topicElement;
+            if (event && event.target) {
+                topicElement = event.target.closest('.topic');
+            } else {
+                // For keyboard accessibility - find element by name
+                topicElement = document.querySelector(`.topic[aria-label*="${topicName}"]`);
+            }
+
+            if (topicElement) {
+                topicElement.classList.add('active');
+                setTimeout(() => {
+                    topicElement.classList.remove('active');
+                }, 500);
+            }
 
             logMessage(`${topicName}: Broadcasting information to subscribed functions`);
         }
 
         function activateService(serviceName) {
-            const serviceElement = event.target.closest('.service');
-            serviceElement.classList.add('active');
-            setTimeout(() => {
-                serviceElement.classList.remove('active');
-            }, 500);
+            let serviceElement;
+            if (event && event.target) {
+                serviceElement = event.target.closest('.service');
+            } else {
+                // For keyboard accessibility - find element by name
+                serviceElement = document.querySelector(`.service[aria-label*="${serviceName}"]`);
+            }
+
+            if (serviceElement) {
+                serviceElement.classList.add('active');
+                setTimeout(() => {
+                    serviceElement.classList.remove('active');
+                }, 500);
+            }
 
             logMessage(`Requesting service: ${serviceName}. Waiting for response...`);
             setTimeout(() => {
                 logMessage(`Response received from ${serviceName}`);
             }, 1500);
         }
+
+        // Add keyboard event handlers
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter' || event.key === ' ') {
+                const target = event.target;
+
+                if (target.classList.contains('node')) {
+                    event.preventDefault();
+                    const label = target.getAttribute('aria-label');
+                    const nodeName = label.split(' - ')[0];
+                    activateNode(nodeName);
+                } else if (target.classList.contains('topic')) {
+                    event.preventDefault();
+                    const label = target.getAttribute('aria-label');
+                    const topicName = label.split(' - ')[0];
+                    activateTopic(topicName);
+                } else if (target.classList.contains('service')) {
+                    event.preventDefault();
+                    const label = target.getAttribute('aria-label');
+                    const serviceName = label.split(' - ')[0];
+                    activateService(serviceName);
+                }
+            }
+        });
 
         function clearLog() {
             const log = document.getElementById('messageLog');
