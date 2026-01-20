@@ -212,6 +212,8 @@ See `.specify/memory/constitution.md` for code quality, testing, performance, se
 ## Active Technologies
 - Markdown/MDX for educational content, Python 3.11 for code examples + Docusaurus for documentation, ROS2 (Robot Operating System 2) concepts for communication paradigms (001-robotic-nervous-system)
 - Static content in documentation files, no dynamic storage required (001-robotic-nervous-system)
+- Python 3.11, C++ (for NVIDIA Isaac components) + NVIDIA Isaac Sim, Isaac ROS, Navigation2 (Nav2) framework, ROS2 (Robot Operating System 2) (003-isaac-robot-brain)
+- N/A (simulation and real-time processing, no persistent storage required for core functionality) (003-isaac-robot-brain)
 
 ## Recent Changes
 - 001-robotic-nervous-system: Added Markdown/MDX for educational content, Python 3.11 for code examples + Docusaurus for documentation, ROS2 (Robot Operating System 2) concepts for communication paradigms

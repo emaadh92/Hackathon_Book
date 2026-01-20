@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="800">
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="800" role="img" aria-label="Software-to-Hardware Pathway: Diagram showing how digital decisions become physical robot actions through different system layers">
+  <title>Software-to-Hardware Pathway</title>
+  <desc>This diagram illustrates the complete pathway from digital decisions to physical robot actions. The process goes through three layers: Software Layer (High-Level Planning, Behavior Controller, Motion Planner, Task Scheduler), Middleware/Controller Layer (Navigation Stack, Motor Controller), and Hardware Layer (Computer Board, Motor Drivers, Actuators & Motors, Sensors & Encoders). Arrows show the forward path of commands and feedback paths for sensor data and status updates.</desc>
+
   <style>
     .layer { fill: none; stroke: #ccc; stroke-width: 2; stroke-dasharray: 5,5; }
     .layer-label { fill: #666; font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; }

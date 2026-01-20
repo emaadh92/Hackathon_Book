@@ -1,0 +1,145 @@
+<svg width="1000" height="700" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="100%" height="100%" fill="#f8f9fa"/>
+
+  <!-- Title -->
+  <text x="500" y="40" text-anchor="middle" font-size="20" font-weight="bold" fill="#212529">Nav2 Architecture</text>
+
+  <!-- Main Container -->
+  <rect x="50" y="70" width="900" height="600" fill="#fff" stroke="#0d6efd" stroke-width="2" rx="10"/>
+
+  <!-- Robot Representation -->
+  <g transform="translate(800, 100)">
+    <circle cx="0" cy="0" r="25" fill="#17a2b8" stroke="#0d6efd" stroke-width="2"/>
+    <text x="0" y="40" text-anchor="middle" font-size="12" fill="#212529">Robot</text>
+    <line x1="0" y1="0" x2="20" y2="-20" stroke="#0d6efd" stroke-width="2"/>
+  </g>
+
+  <!-- Navigation Stack Components -->
+  <g transform="translate(100, 100)">
+    <!-- Planner Server -->
+    <rect x="0" y="0" width="180" height="80" fill="#d1ecf1" stroke="#0c5460" stroke-width="2" rx="8"/>
+    <text x="90" y="20" text-anchor="middle" font-size="12" font-weight="bold" fill="#0c5460">Planner Server</text>
+    <text x="90" y="40" text-anchor="middle" font-size="10" fill="#0c5460">Global & Local</text>
+    <text x="90" y="55" text-anchor="middle" font-size="10" fill="#0c5460">Path Planning</text>
+    <text x="90" y="70" text-anchor="middle" font-size="9" fill="#0c5460">(A*, Dijkstra, etc.)</text>
+
+    <!-- Controller Server -->
+    <rect x="220" y="0" width="180" height="80" fill="#f8d7da" stroke="#721c24" stroke-width="2" rx="8"/>
+    <text x="310" y="20" text-anchor="middle" font-size="12" font-weight="bold" fill="#721c24">Controller Server</text>
+    <text x="310" y="40" text-anchor="middle" font-size="10" fill="#721c24">Trajectory</text>
+    <text x="310" y="55" text-anchor="middle" font-size="10" fill="#721c24">Generation</text>
+    <text x="310" y="70" text-anchor="middle" font-size="9" fill="#721c24">(Pure Pursuit, etc.)</text>
+
+    <!-- BT Navigator -->
+    <rect x="440" y="0" width="180" height="80" fill="#d4edda" stroke="#155724" stroke-width="2" rx="8"/>
+    <text x="530" y="20" text-anchor="middle" font-size="12" font-weight="bold" fill="#155724">BT Navigator</text>
+    <text x="530" y="40" text-anchor="middle" font-size="10" fill="#155724">Behavior Tree</text>
+    <text x="530" y="55" text-anchor="middle" font-size="10" fill="#155724">Based Navigation</text>
+    <text x="530" y="70" text-anchor="middle" font-size="9" fill="#155724">(Decision Making)</text>
+
+    <!-- Recovery Server -->
+    <rect x="660" y="0" width="180" height="80" fill="#f8d7da" stroke="#721c24" stroke-width="2" rx="8"/>
+    <text x="750" y="20" text-anchor="middle" font-size="12" font-weight="bold" fill="#721c24">Recovery Server</text>
+    <text x="750" y="40" text-anchor="middle" font-size="10" fill="#721c24">Fallback</text>
+    <text x="750" y="55" text-anchor="middle" font-size="10" fill="#721c24">Behaviors</text>
+    <text x="750" y="70" text-anchor="middle" font-size="9" fill="#721c24">(Spin, Backup, etc.)</text>
+
+    <!-- Costmap Server -->
+    <rect x="0" y="110" width="180" height="80" fill="#e2e3e5" stroke="#41464b" stroke-width="2" rx="8"/>
+    <text x="90" y="130" text-anchor="middle" font-size="12" font-weight="bold" fill="#41464b">Costmap Server</text>
+    <text x="90" y="150" text-anchor="middle" font-size="10" fill="#41464b">Obstacle</text>
+    <text x="90" y="165" text-anchor="middle" font-size="10" fill="#41464b">Management</text>
+    <text x="90" y="180" text-anchor="middle" font-size="9" fill="#41464b">(Collision Avoidance)</text>
+
+    <!-- Map Server -->
+    <rect x="220" y="110" width="180" height="80" fill="#e2e3e5" stroke="#41464b" stroke-width="2" rx="8"/>
+    <text x="310" y="130" text-anchor="middle" font-size="12" font-weight="bold" fill="#41464b">Map Server</text>
+    <text x="310" y="150" text-anchor="middle" font-size="10" fill="#41464b">Static Map</text>
+    <text x="310" y="165" text-anchor="middle" font-size="10" fill="#41464b">Management</text>
+    <text x="310" y="180" text-anchor="middle" font-size="9" fill="#41464b">(Environment Model)</text>
+
+    <!-- Lifecycle Manager -->
+    <rect x="440" y="110" width="180" height="80" fill="#d1ecf1" stroke="#0c5460" stroke-width="2" rx="8"/>
+    <text x="530" y="130" text-anchor="middle" font-size="12" font-weight="bold" fill="#0c5460">Lifecycle Manager</text>
+    <text x="530" y="150" text-anchor="middle" font-size="10" fill="#0c5460">Component</text>
+    <text x="530" y="165" text-anchor="middle" font-size="10" fill="#0c5460">State Control</text>
+    <text x="530" y="180" text-anchor="middle" font-size="9" fill="#0c5460">(Start/Stop/Reset)</text>
+
+    <!-- Transform Server -->
+    <rect x="660" y="110" width="180" height="80" fill="#e2e3e5" stroke="#41464b" stroke-width="2" rx="8"/>
+    <text x="750" y="130" text-anchor="middle" font-size="12" font-weight="bold" fill="#41464b">Transform Server</text>
+    <text x="750" y="150" text-anchor="middle" font-size="10" fill="#41464b">Coordinate</text>
+    <text x="750" y="165" text-anchor="middle" font-size="10" fill="#41464b">Transformations</text>
+    <text x="750" y="180" text-anchor="middle" font-size="9" fill="#41464b">(TF Management)</text>
+  </g>
+
+  <!-- Perceptions (from previous layers) -->
+  <g transform="translate(100, 300)">
+    <!-- Localization -->
+    <rect x="0" y="0" width="180" height="80" fill="#d1ecf1" stroke="#0c5460" stroke-width="2" rx="8"/>
+    <text x="90" y="20" text-anchor="middle" font-size="12" font-weight="bold" fill="#0c5460">Localization</text>
+    <text x="90" y="40" text-anchor="middle" font-size="10" fill="#0c5460">(AMCL, etc.)</text>
+    <text x="90" y="55" text-anchor="middle" font-size="10" fill="#0c5460">Robot Position</text>
+    <text x="90" y="70" text-anchor="middle" font-size="9" fill="#0c5460">(From Isaac ROS)</text>
+
+    <!-- Sensor Processors -->
+    <rect x="220" y="0" width="180" height="80" fill="#f8d7da" stroke="#721c24" stroke-width="2" rx="8"/>
+    <text x="310" y="20" text-anchor="middle" font-size="12" font-weight="bold" fill="#721c24">Sensor Processors</text>
+    <text x="310" y="40" text-anchor="middle" font-size="10" fill="#721c24">(LiDAR, Cameras)</text>
+    <text x="310" y="55" text-anchor="middle" font-size="10" fill="#721c24">Obstacle Detection</text>
+    <text x="310" y="70" text-anchor="middle" font-size="9" fill="#721c24">(From Isaac ROS)</text>
+
+    <!-- Perception Stack -->
+    <rect x="440" y="0" width="180" height="80" fill="#d4edda" stroke="#155724" stroke-width="2" rx="8"/>
+    <text x="530" y="20" text-anchor="middle" font-size="12" font-weight="bold" fill="#155724">Perception Stack</text>
+    <text x="530" y="40" text-anchor="middle" font-size="10" fill="#155724">(SLAM, Mapping)</text>
+    <text x="530" y="55" text-anchor="middle" font-size="10" fill="#155724">Environment Model</text>
+    <text x="530" y="70" text-anchor="middle" font-size="9" fill="#155724">(From Isaac ROS)</text>
+  </g>
+
+  <!-- User Interface -->
+  <g transform="translate(100, 420)">
+    <rect x="0" y="0" width="740" height="80" fill="#d4edda" stroke="#155724" stroke-width="2" rx="8"/>
+    <text x="370" y="25" text-anchor="middle" font-size="12" font-weight="bold" fill="#155724">User Interface</text>
+    <text x="370" y="45" text-anchor="middle" font-size="10" fill="#155724">Goal Setting, Monitoring, Command Interface</text>
+    <text x="370" y="65" text-anchor="middle" font-size="9" fill="#155724">(RViz, Custom Apps, etc.)</text>
+  </g>
+
+  <!-- Arrows showing data flow -->
+  <g stroke="#6c757d" stroke-width="2">
+    <!-- From perceptions to navigation stack -->
+    <line x1="180" y1="340" x2="220" y2="140" marker-end="url(#arrowhead)"/>
+    <line x1="400" y1="340" x2="440" y2="140" marker-end="url(#arrowhead)"/>
+    <line x1="620" y1="340" x2="660" y2="140" marker-end="url(#arrowhead)"/>
+
+    <!-- From UI to navigation stack -->
+    <line x1="370" y1="420" x2="530" y2="140" marker-end="url(#arrowhead)"/>
+
+    <!-- From navigation stack to robot -->
+    <line x1="900" y1="140" x2="850" y2="140" marker-end="url(#arrowhead)"/>
+
+    <!-- Feedback loops -->
+    <line x1="850" y1="140" x2="850" y2="340" stroke-dasharray="5,5"/>
+    <line x1="850" y1="340" x2="180" y2="340" stroke-dasharray="5,5" marker-end="url(#arrowhead)"/>
+  </g>
+
+  <!-- Isaac ROS Integration -->
+  <g transform="translate(200, 550)">
+    <rect x="0" y="0" width="600" height="60" fill="#e2e3e5" stroke="#41464b" stroke-width="2" rx="8"/>
+    <text x="300" y="20" text-anchor="middle" font-size="12" font-weight="bold" fill="#41464b">Isaac ROS Integration</text>
+    <text x="300" y="40" text-anchor="middle" font-size="10" fill="#41464b">Hardware Accelerated Perception & Localization Feeding into Nav2 Components</text>
+  </g>
+
+  <!-- Labels -->
+  <text x="100" y="650" font-size="14" font-weight="bold" fill="#212529">Perception Layer</text>
+  <text x="100" y="280" font-size="14" font-weight="bold" fill="#212529">Navigation Stack</text>
+  <text x="100" y="400" font-size="14" font-weight="bold" fill="#212529">User Interface</text>
+
+  <!-- Arrowhead definition -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#6c757d"/>
+    </marker>
+  </defs>
+</svg>

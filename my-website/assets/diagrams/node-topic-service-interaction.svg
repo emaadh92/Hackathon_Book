@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="700">
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="700" role="img" aria-label="Robot Functions and Communication Patterns: Diagram showing different robot functions and how they communicate through topics and services">
+  <title>Robot Functions and Their Responsibilities</title>
+  <desc>This diagram illustrates how different robot functions (departments) communicate with each other using topics (information channels) and services (request centers). The top row shows executive decision, vision, information integration, and safety monitoring functions. The bottom row shows motor control, navigation, and manipulation functions. Information flows between these functions through various topics and service requests.</desc>
+
   <style>
     .function { fill: #2E86AB; stroke: #1A5A7F; stroke-width: 2; rx: 10; ry: 10; }
     .function-title { fill: white; font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; text-anchor: middle; dominant-baseline: middle; }

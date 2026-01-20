@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Decision-to-Action Pathway Simulation</title>
+    <meta name="description" content="Interactive simulation showing how robot decisions transform from software concepts to physical actions through different system stages">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -141,57 +142,59 @@
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container" role="main">
         <h1>Decision-to-Action Pathway Simulation</h1>
 
-        <div class="instructions">
-            <p><strong>How to use:</strong> Select a robot decision below and watch how it transforms from software concept to physical action. Each stage highlights as the decision progresses through the system.</p>
+        <div class="instructions" role="region" aria-labelledby="instructions-heading">
+            <h2 id="instructions-heading">How to Use This Simulation</h2>
+            <p>Select a robot decision below and watch how it transforms from software concept to physical action. Each stage highlights as the decision progresses through the system.</p>
         </div>
 
-        <div class="decision-options">
-            <button class="decision-btn" onclick="simulateDecision('navigate')">Navigate to Location</button>
-            <button class="decision-btn" onclick="simulateDecision('grasp')">Grasp Object</button>
-            <button class="decision-btn" onclick="simulateDecision('avoid')">Avoid Obstacle</button>
-            <button class="decision-btn" onclick="simulateDecision('turn')">Turn Right 90°</button>
+        <div class="decision-options" role="group" aria-labelledby="decision-options-heading">
+            <h2 id="decision-options-heading">Select a Robot Decision</h2>
+            <button class="decision-btn" onclick="simulateDecision('navigate')" aria-describedby="instructions-heading">Navigate to Location</button>
+            <button class="decision-btn" onclick="simulateDecision('grasp')" aria-describedby="instructions-heading">Grasp Object</button>
+            <button class="decision-btn" onclick="simulateDecision('avoid')" aria-describedby="instructions-heading">Avoid Obstacle</button>
+            <button class="decision-btn" onclick="simulateDecision('turn')" aria-describedby="instructions-heading">Turn Right 90°</button>
         </div>
 
-        <div class="pathway-container">
-            <div class="stage software-stage" id="softwareStage">
+        <div class="pathway-container" role="region" aria-label="Decision-to-Action Pathway Stages">
+            <div class="stage software-stage" id="softwareStage" role="region" aria-label="Software Decision Stage">
                 <h3>Software Decision</h3>
                 <p>High-level command</p>
             </div>
 
-            <div class="arrow" style="left: 20%; width: 15%;"></div>
+            <div class="arrow" style="left: 20%; width: 15%;" aria-hidden="true"></div>
 
-            <div class="stage middleware-stage" id="middlewareStage">
+            <div class="stage middleware-stage" id="middlewareStage" role="region" aria-label="Planning and Control Stage">
                 <h3>Planning & Control</h3>
                 <p>Path planning, motion control</p>
             </div>
 
-            <div class="arrow" style="left: 40%; width: 15%;"></div>
+            <div class="arrow" style="left: 40%; width: 15%;" aria-hidden="true"></div>
 
-            <div class="stage hardware-stage" id="hardwareStage">
+            <div class="stage hardware-stage" id="hardwareStage" role="region" aria-label="Hardware Interface Stage">
                 <h3>Hardware Interface</h3>
                 <p>Motor drivers, controllers</p>
             </div>
 
-            <div class="arrow" style="left: 60%; width: 15%;"></div>
+            <div class="arrow" style="left: 60%; width: 15%;" aria-hidden="true"></div>
 
-            <div class="stage physical-stage" id="physicalStage">
+            <div class="stage physical-stage" id="physicalStage" role="region" aria-label="Physical Action Stage">
                 <h3>Physical Action</h3>
                 <p>Actual robot movement</p>
             </div>
         </div>
 
-        <div class="controls">
-            <button onclick="stepThroughSimulation()">Step Through Process</button>
-            <button onclick="resetSimulation()">Reset Simulation</button>
-            <button onclick="autoPlay()">Auto Play</button>
+        <div class="controls" role="toolbar" aria-label="Simulation Controls">
+            <button onclick="stepThroughSimulation()" aria-describedby="actionDisplay">Step Through Process</button>
+            <button onclick="resetSimulation()" aria-describedby="actionDisplay">Reset Simulation</button>
+            <button onclick="autoPlay()" aria-describedby="actionDisplay">Auto Play</button>
         </div>
 
-        <div class="action-display" id="actionDisplay">
+        <div class="action-display" id="actionDisplay" role="status" aria-live="polite" aria-atomic="true">
             <p>Select a decision to begin the simulation...</p>
-            <div id="stepInfo" class="step-info"></div>
+            <div id="stepInfo" class="step-info" role="region" aria-labelledby="stepInfoHeading"></div>
         </div>
     </div>
 
@@ -355,6 +358,28 @@
 
         // Initialize
         resetSimulation();
+        // Add keyboard event handlers for buttons
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter' || event.key === ' ') {
+                const target = event.target;
+
+                if (target.classList.contains('decision-btn')) {
+                    event.preventDefault();
+                    const onClickAttr = target.getAttribute('onclick');
+                    if (onClickAttr && onClickAttr.includes('simulateDecision')) {
+                        eval(onClickAttr);
+                    }
+                } else if (target.textContent === 'Step Through Process' ||
+                          target.textContent === 'Reset Simulation' ||
+                          target.textContent === 'Auto Play') {
+                    event.preventDefault();
+                    const onClickAttr = target.getAttribute('onclick');
+                    if (onClickAttr) {
+                        eval(onClickAttr);
+                    }
+                }
+            }
+        });
     </script>
 </body>
 </html>

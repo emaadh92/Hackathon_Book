@@ -1,0 +1,274 @@
+# API Contracts: Digital Twin Simulation Interfaces
+
+## Overview
+These API contracts represent the conceptual interfaces that would exist in a digital twin system for robotics. They are designed for educational purposes to demonstrate how different components of a digital twin system interact.
+
+## 1. Digital Twin Management API
+
+### POST /digital-twins
+**Description**: Create a new digital twin instance
+**Request Body**:
+```json
+{
+  "twinId": "string",
+  "robotModel": "string",
+  "environmentId": "string",
+  "configuration": {
+    "sensors": ["lidar", "camera", "imu"],
+    "capabilities": ["navigation", "manipulation"]
+  }
+}
+```
+**Response**: 201 Created
+```json
+{
+  "twinId": "string",
+  "status": "created",
+  "simulationUrl": "string",
+  "dashboardUrl": "string"
+}
+```
+
+### GET /digital-twins/{twinId}
+**Description**: Retrieve digital twin information
+**Response**: 200 OK
+```json
+{
+  "twinId": "string",
+  "robotModel": "string",
+  "status": "operational|learning|evaluation",
+  "environment": "environment details",
+  "lastUpdated": "timestamp"
+}
+```
+
+### PUT /digital-twins/{twinId}/state
+**Description**: Update digital twin operational state
+**Request Body**:
+```json
+{
+  "desiredState": "running|paused|recording|evaluation"
+}
+```
+**Response**: 200 OK
+
+## 2. Physics Simulation API
+
+### POST /environments/{environmentId}/physics
+**Description**: Configure physics properties for simulation
+**Request Body**:
+```json
+{
+  "gravity": {
+    "x": 0,
+    "y": 0,
+    "z": -9.81
+  },
+  "friction": "float",
+  "collisionDetection": "boolean",
+  "timeScale": "float" // 1.0 = real-time, >1 = accelerated
+}
+```
+**Response**: 200 OK
+
+### GET /environments/{environmentId}/physics
+**Description**: Get current physics configuration
+**Response**: 200 OK
+```json
+{
+  "gravity": {
+    "x": 0,
+    "y": 0,
+    "z": -9.81
+  },
+  "friction": 0.5,
+  "collisionDetection": true,
+  "timeScale": 1.0
+}
+```
+
+## 3. Environment Modeling API
+
+### POST /environments
+**Description**: Create a new simulation environment
+**Request Body**:
+```json
+{
+  "name": "string",
+  "description": "string",
+  "layout": {
+    "objects": [
+      {
+        "type": "wall|floor|obstacle|human",
+        "position": {"x": "float", "y": "float", "z": "float"},
+        "rotation": {"x": "float", "y": "float", "z": "float"},
+        "dimensions": {"width": "float", "height": "float", "depth": "float"}
+      }
+    ],
+    "lighting": {
+      "ambient": "float",
+      "directionalLights": []
+    }
+  }
+}
+```
+**Response**: 201 Created
+```json
+{
+  "environmentId": "string",
+  "name": "string",
+  "status": "ready"
+}
+```
+
+### PUT /environments/{environmentId}/objects
+**Description**: Add or update objects in the environment
+**Request Body**:
+```json
+{
+  "objects": [
+    {
+      "id": "string",
+      "type": "wall|floor|obstacle|human",
+      "position": {"x": "float", "y": "float", "z": "float"},
+      "properties": {}
+    }
+  ]
+}
+```
+**Response**: 200 OK
+
+## 4. Sensor Simulation API
+
+### GET /digital-twins/{twinId}/sensors/lidar
+**Description**: Get simulated LiDAR sensor data
+**Response**: 200 OK
+```json
+{
+  "timestamp": "ISO8601",
+  "sensorType": "lidar",
+  "data": {
+    "points": [
+      {"x": "float", "y": "float", "z": "float", "intensity": "float"}
+    ],
+    "rangeMin": "float",
+    "rangeMax": "float",
+    "fovHorizontal": "float",
+    "fovVertical": "float"
+  }
+}
+```
+
+### GET /digital-twins/{twinId}/sensors/camera
+**Description**: Get simulated camera sensor data
+**Response**: 200 OK
+```json
+{
+  "timestamp": "ISO8601",
+  "sensorType": "camera",
+  "data": {
+    "imageData": "base64 encoded image",
+    "resolution": {"width": "int", "height": "int"},
+    "depthData": "array of depth values if depth camera"
+  }
+}
+```
+
+### GET /digital-twins/{twinId}/sensors/imu
+**Description**: Get simulated IMU sensor data
+**Response**: 200 OK
+```json
+{
+  "timestamp": "ISO8601",
+  "sensorType": "imu",
+  "data": {
+    "acceleration": {"x": "float", "y": "float", "z": "float"},
+    "gyroscope": {"x": "float", "y": "float", "z": "float"},
+    "magnetometer": {"x": "float", "y": "float", "z": "float"},
+    "orientation": {"w": "float", "x": "float", "y": "float", "z": "float"}
+  }
+}
+```
+
+## 5. Human-Robot Interaction API
+
+### POST /environments/{environmentId}/humans
+**Description**: Add human presence to simulation
+**Request Body**:
+```json
+{
+  "humanId": "string",
+  "behaviorProfile": "calm|cautious|aggressive",
+  "initialPosition": {"x": "float", "y": "float", "z": "float"},
+  "movementPattern": "stationary|random|path_following"
+}
+```
+**Response**: 201 Created
+```json
+{
+  "humanId": "string",
+  "status": "spawned"
+}
+```
+
+### GET /environments/{environmentId}/humans
+**Description**: Get all humans in the environment
+**Response**: 200 OK
+```json
+{
+  "humans": [
+    {
+      "humanId": "string",
+      "position": {"x": "float", "y": "float", "z": "float"},
+      "behaviorState": "string",
+      "interactionStatus": "safe|caution|alert"
+    }
+  ]
+}
+```
+
+## 6. Simulation Control API
+
+### POST /simulations/{simulationId}/control
+**Description**: Control simulation execution
+**Request Body**:
+```json
+{
+  "command": "start|pause|reset|set_speed",
+  "parameters": {
+    "speedFactor": "float" // for set_speed command
+  }
+}
+```
+**Response**: 200 OK
+
+### GET /simulations/{simulationId}/metrics
+**Description**: Get simulation metrics and statistics
+**Response**: 200 OK
+```json
+{
+  "simulationTime": "float seconds",
+  "realTimeRatio": "float",
+  "performanceMetrics": {
+    "framesPerSecond": "int",
+    "physicsStepsPerSecond": "int",
+    "cpuUsage": "percentage"
+  },
+  "robotMetrics": {
+    "distanceTraveled": "float meters",
+    "tasksCompleted": "int",
+    "safetyIncidents": "int"
+  }
+}
+```
+
+## Common Response Codes
+- 200: Success
+- 201: Resource created
+- 400: Bad request (invalid input)
+- 404: Resource not found
+- 500: Internal server error
+
+## Authentication
+All APIs require Bearer token authentication in the Authorization header:
+`Authorization: Bearer {token}`

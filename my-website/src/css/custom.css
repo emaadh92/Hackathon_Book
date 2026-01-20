@@ -28,3 +28,78 @@
   --ifm-color-primary-lightest: #4fddbf;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
+
+/* Digital Twin Module Custom Styles */
+.digital-twin-diagram {
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1rem 0;
+  background-color: #f8f9fa;
+}
+
+.digital-twin-caption {
+  font-style: italic;
+  color: #6c757d;
+  text-align: center;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.concept-box {
+  border-left: 4px solid #28a745;
+  background-color: #f8f9fa;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+.analogy-section {
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 1rem 0;
+  background-color: #fff;
+}
+
+.analogy-title {
+  color: #007bff;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.simulation-comparison {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  margin: 1rem 0;
+}
+
+.simulation-side {
+  flex: 1;
+  min-width: 300px;
+  padding: 1rem;
+  margin: 0.5rem;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+}
+
+.simulation-side.real-world {
+  background-color: #f8d7da;
+}
+
+.simulation-side.virtual-world {
+  background-color: #d4edda;
+}
+
+.physics-properties {
+  background-color: #f1f3f4;
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+.property-item {
+  margin: 0.5rem 0;
+  padding-left: 1rem;
+  border-left: 2px solid #adb5bd;
+}

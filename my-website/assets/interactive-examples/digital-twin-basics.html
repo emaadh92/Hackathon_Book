@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Twin Basics</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #2e8555;
+            text-align: center;
+        }
+
+        .comparison-container {
+            display: flex;
+            justify-content: space-between;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .real-world, .digital-world {
+            width: 45%;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px;
+        }
+
+        .real-world {
+            background-color: #ffe6e6;
+            border: 2px solid #ff6666;
+        }
+
+        .digital-world {
+            background-color: #e6f0ff;
+            border: 2px solid #66b2ff;
+        }
+
+        .robot-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .robot {
+            width: 100px;
+            height: 120px;
+            background-color: #4CAF50;
+            border-radius: 10px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .robot.eye {
+            width: 20px;
+            height: 20px;
+            background-color: white;
+            border-radius: 50%;
+            margin: 5px;
+        }
+
+        .robot.limb {
+            width: 20px;
+            height: 40px;
+            background-color: #388E3C;
+            margin: 5px 0;
+        }
+
+        .controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        button {
+            background-color: #2e8555;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #216142;
+        }
+
+        .info-box {
+            background-color: #f0f8ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #2e8555;
+        }
+
+        .sensor-data {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Understanding Digital Twins</h1>
+
+        <div class="info-box">
+            <p>A digital twin is a virtual representation of a physical robot and its environment.
+            This interactive example shows the relationship between a real robot and its digital twin.</p>
+        </div>
+
+        <div class="comparison-container">
+            <div class="real-world">
+                <h3>Real Robot</h3>
+                <div class="robot-container">
+                    <div class="robot">
+                        <div class="eye"></div>
+                        <div class="eye"></div>
+                        <div class="limb"></div>
+                        <div class="limb"></div>
+                    </div>
+                </div>
+                <p>Physical robot in real environment</p>
+                <p>Risk of damage and high cost</p>
+            </div>
+
+            <div class="digital-world">
+                <h3>Digital Twin</h3>
+                <div class="robot-container">
+                    <div class="robot" style="background-color: #2196F3;">
+                        <div class="eye"></div>
+                        <div class="eye"></div>
+                        <div class="limb"></div>
+                        <div class="limb"></div>
+                    </div>
+                </div>
+                <p>Virtual robot in simulation</p>
+                <p>Safe testing environment</p>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button onclick="simulateAction('move')">Move Robot</button>
+            <button onclick="simulateAction('sense')">Sense Environment</button>
+            <button onclick="simulateAction('interact')">Interact with Objects</button>
+        </div>
+
+        <div id="sensorDisplay" class="sensor-data">
+            Sensor data will appear here...
+        </div>
+
+        <div class="info-box">
+            <h4>Key Benefits of Digital Twins:</h4>
+            <ul>
+                <li>Safe testing without physical risk</li>
+                <li>Cost-effective development</li>
+                <li>Accelerated learning cycles</li>
+                <li>Scenario testing without real-world consequences</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function simulateAction(action) {
+            const sensorDisplay = document.getElementById('sensorDisplay');
+
+            switch(action) {
+                case 'move':
+                    sensorDisplay.innerHTML = 'Movement: Translating forward at 0.5 m/s<br>Rotation: Turning 15 degrees clockwise<br>Position: (2.3, 1.8) meters';
+                    break;
+                case 'sense':
+                    sensorDisplay.innerHTML = 'LiDAR: Detected obstacle 1.2m ahead<br>Camera: Identified blue cube at coordinates (2.5, 1.8)<br>IMU: Orientation stable, no tilt detected';
+                    break;
+                case 'interact':
+                    sensorDisplay.innerHTML = 'Approaching object at position (2.5, 1.8)<br>Gripper: Activating, closing slowly<br>Force sensors: Detecting 2.1N of pressure<br>Object: Successfully grasped';
+                    break;
+                default:
+                    sensorDisplay.innerHTML = 'Sensor data will appear here...';
+            }
+        }
+    </script>
+</body>
+</html>

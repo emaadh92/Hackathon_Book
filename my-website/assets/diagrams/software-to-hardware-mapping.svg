@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1000">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1000" role="img" aria-label="Software-to-Hardware Component Mapping: Diagram showing how robot functions connect to physical components">
+  <title>Software-to-Hardware Component Mapping</title>
+  <desc>This diagram shows the mapping between robot software functions (departments) and their corresponding physical hardware components. The upper section displays robot functions like Vision Department, Motor Control, Decision Making, Safety Monitor, and Localization. The middle section shows physical components like cameras, motors, main computer, safety sensors, and positioning systems. The lower section illustrates how these connect inside a physical robot chassis with wheels, cameras, and internal components. Dashed and solid arrows indicate direct and indirect functional connections.</desc>
+
   <style>
     .software { fill: #2E86AB; stroke: #1A5A7F; stroke-width: 2; rx: 8; ry: 8; }
     .hardware { fill: #F18F01; stroke: #B86B00; stroke-width: 2; rx: 8; ry: 8; }

@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Path Planning Algorithm Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .demo-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .world-grid {
+            flex: 1;
+            border: 2px solid #0d6efd;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            background-color: #e9f7ef;
+        }
+        canvas {
+            width: 100%;
+            height: 500px;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #0d6efd;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0b5ed7;
+        }
+        .algorithm-selector {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        select {
+            padding: 8px 12px;
+            font-size: 16px;
+            border-radius: 4px;
+        }
+        .info-panel {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .status-box {
+            flex: 1;
+            min-width: 200px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #0d6efd;
+        }
+        .status-title {
+            font-weight: bold;
+            color: #0d6efd;
+            margin-bottom: 8px;
+        }
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .metric-card {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .metric-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #0d6efd;
+        }
+        .metric-label {
+            font-size: 14px;
+            color: #6c757d;
+        }
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+        }
+        .instructions {
+            background-color: #d1ecf1;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #0c5460;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Path Planning Algorithm Demo</h1>
+
+        <div class="demo-container">
+            <div class="algorithm-selector">
+                <select id="algorithmSelect">
+                    <option value="astar">A* Algorithm</option>
+                    <option value="dijkstra">Dijkstra's Algorithm</option>
+                    <option value="greedy">Greedy Best-First Search</option>
+                    <option value="wavefront">Wavefront Propagation</option>
+                </select>
+                <button onclick="setStartPoint()">Set Start Point</button>
+                <button onclick="setEndPoint()">Set End Point</button>
+                <button onclick="addObstacle()">Add Obstacle</button>
+                <button onclick="clearGrid()">Clear Grid</button>
+            </div>
+
+            <div class="world-grid">
+                <canvas id="gridCanvas"></canvas>
+            </div>
+
+            <div class="controls">
+                <button onclick="runPathPlanning()">Run Path Planning</button>
+                <button onclick="animatePath()">Animate Path</button>
+                <button onclick="addRandomObstacles()">Add Random Obstacles</button>
+                <button onclick="resetDemo()">Reset Demo</button>
+            </div>
+
+            <div class="info-panel">
+                <div class="status-box">
+                    <div class="status-title">Algorithm Info</div>
+                    <div>Selected: <span id="selectedAlgorithm">A* Algorithm</span></div>
+                    <div>Complexity: <span id="complexity">O(b^d)</span></div>
+                    <div>Optimal: <span id="optimal">Yes</span></div>
+                </div>
+                <div class="status-box">
+                    <div class="status-title">Path Info</div>
+                    <div>Distance: <span id="pathDistance">0</span> units</div>
+                    <div>Nodes Visited: <span id="nodesVisited">0</span></div>
+                    <div>Path Length: <span id="pathLength">0</span> steps</div>
+                </div>
+                <div class="status-box">
+                    <div class="status-title">System Status</div>
+                    <div>Status: <span id="status">Ready</span></div>
+                    <div>Start: <span id="startPos">(5, 5)</span></div>
+                    <div>End: <span id="endPos">(25, 15)</span></div>
+                </div>
+            </div>
+
+            <div class="metrics">
+                <div class="metric-card">
+                    <div class="metric-value" id="efficiencyMetric">0%</div>
+                    <div class="metric-label">Path Efficiency</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="timeMetric">0 ms</div>
+                    <div class="metric-label">Computation Time</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="nodesMetric">0</div>
+                    <div class="metric-label">Nodes Processed</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="costMetric">0</div>
+                    <div class="metric-label">Path Cost</div>
+                </div>
+            </div>
+
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #0d6efd;"></div>
+                    <span>Start Point</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #28a745;"></div>
+                    <span>End Point</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #6c757d;"></div>
+                    <span>Obstacles</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #ffc107;"></div>
+                    <span>Path</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #17a2b8;"></div>
+                    <span>Explored Nodes</span>
+                </div>
+            </div>
+
+            <div class="instructions">
+                <h3>Instructions:</h3>
+                <ul>
+                    <li>Select an algorithm from the dropdown menu</li>
+                    <li>Click "Set Start Point" then click on the grid to place the start</li>
+                    <li>Click "Set End Point" then click on the grid to place the destination</li>
+                    <li>Click "Add Obstacle" then click on the grid to place obstacles</li>
+                    <li>Click "Run Path Planning" to execute the selected algorithm</li>
+                    <li>Click "Animate Path" to visualize the path finding process</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gridCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Set canvas dimensions
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+
+        // Grid configuration
+        const cellSize = 20;
+        const cols = Math.floor(canvas.width / cellSize);
+        const rows = Math.floor(canvas.height / cellSize);
+
+        // Grid state
+        let grid = [];
+        let start = { x: 5, y: 5 };
+        let end = { x: 25, y: 15 };
+        let path = [];
+        let explored = [];
+        let currentMode = 'none'; // 'start', 'end', 'obstacle'
+
+        // Initialize grid
+        function initGrid() {
+            grid = [];
+            for (let y = 0; y < rows; y++) {
+                grid[y] = [];
+                for (let x = 0; x < cols; x++) {
+                    grid[y][x] = { isObstacle: false, g: Infinity, h: 0, f: 0, parent: null };
+                }
+            }
+        }
+
+        // Draw the grid
+        function drawGrid() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw grid lines
+            ctx.strokeStyle = '#dee2e6';
+            ctx.lineWidth = 0.5;
+            for (let x = 0; x <= canvas.width; x += cellSize) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            for (let y = 0; y <= canvas.height; y += cellSize) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+
+            // Draw cells
+            for (let y = 0; y < rows; y++) {
+                for (let x = 0; x < cols; x++) {
+                    if (grid[y][x].isObstacle) {
+                        ctx.fillStyle = '#6c757d';
+                        ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+                    }
+                }
+            }
+
+            // Draw explored nodes
+            for (const node of explored) {
+                ctx.fillStyle = 'rgba(23, 162, 184, 0.3)';
+                ctx.fillRect(node.x * cellSize, node.y * cellSize, cellSize, cellSize);
+            }
+
+            // Draw path
+            for (const node of path) {
+                ctx.fillStyle = 'rgba(255, 193, 7, 0.6)';
+                ctx.fillRect(node.x * cellSize, node.y * cellSize, cellSize, cellSize);
+            }
+
+            // Draw start and end points
+            ctx.fillStyle = '#0d6efd';
+            ctx.fillRect(start.x * cellSize, start.y * cellSize, cellSize, cellSize);
+
+            ctx.fillStyle = '#28a745';
+            ctx.fillRect(end.x * cellSize, end.y * cellSize, cellSize, cellSize);
+
+            // Draw start and end icons
+            ctx.fillStyle = 'white';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('S', start.x * cellSize + cellSize/2, start.y * cellSize + cellSize/2 + 4);
+            ctx.fillText('G', end.x * cellSize + cellSize/2, end.y * cellSize + cellSize/2 + 4);
+        }
+
+        // Heuristic function (Manhattan distance)
+        function heuristic(a, b) {
+            return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
+        }
+
+        // A* pathfinding algorithm
+        function aStar() {
+            const openSet = [];
+            const closedSet = [];
+
+            // Reset grid values
+            for (let y = 0; y < rows; y++) {
+                for (let x = 0; x < cols; x++) {
+                    grid[y][x].g = Infinity;
+                    grid[y][x].h = heuristic({x, y}, end);
+                    grid[y][x].f = Infinity;
+                    grid[y][x].parent = null;
+                }
+            }
+
+            // Initialize start node
+            const startNode = grid[start.y][start.x];
+            startNode.g = 0;
+            startNode.f = startNode.g + startNode.h;
+            openSet.push(start);
+
+            const startTime = performance.now();
+
+            while (openSet.length > 0) {
+                // Find node with lowest f score
+                let lowestIndex = 0;
+                for (let i = 1; i < openSet.length; i++) {
+                    if (grid[openSet[i].y][openSet[i].x].f < grid[openSet[lowestIndex].y][openSet[lowestIndex].x].f) {
+                        lowestIndex = i;
+                    }
+                }
+
+                const current = openSet[lowestIndex];
+
+                // If we reached the end
+                if (current.x === end.x && current.y === end.y) {
+                    // Reconstruct path
+                    let temp = current;
+                    const path = [];
+                    while (temp !== null) {
+                        path.push(temp);
+                        temp = grid[temp.y][temp.x].parent;
+                    }
+
+                    const endTime = performance.now();
+                    updateMetrics(path.length, explored.length, endTime - startTime, path.length);
+                    return path.reverse();
+                }
+
+                // Move current from open to closed set
+                openSet.splice(lowestIndex, 1);
+                closedSet.push(current);
+
+                // Add to explored list for visualization
+                if (!(current.x === start.x && current.y === start.y)) {
+                    explored.push(current);
+                }
+
+                // Check neighbors
+                const neighbors = [
+                    {x: current.x + 1, y: current.y},
+                    {x: current.x - 1, y: current.y},
+                    {x: current.x, y: current.y + 1},
+                    {x: current.x, y: current.y - 1}
+                ];
+
+                for (const neighbor of neighbors) {
+                    // Check if neighbor is valid
+                    if (neighbor.x < 0 || neighbor.x >= cols ||
+                        neighbor.y < 0 || neighbor.y >= rows ||
+                        grid[neighbor.y][neighbor.x].isObstacle) {
+                        continue;
+                    }
+
+                    // Check if neighbor is in closed set
+                    if (closedSet.some(node => node.x === neighbor.x && node.y === neighbor.y)) {
+                        continue;
+                    }
+
+                    const tentativeG = grid[current.y][current.x].g + 1;
+
+                    if (!openSet.some(node => node.x === neighbor.x && node.y === neighbor.y)) {
+                        openSet.push(neighbor);
+                    } else if (tentativeG >= grid[neighbor.y][neighbor.x].g) {
+                        continue;
+                    }
+
+                    grid[neighbor.y][neighbor.x].parent = current;
+                    grid[neighbor.y][neighbor.x].g = tentativeG;
+                    grid[neighbor.y][neighbor.x].f = grid[neighbor.y][neighbor.x].g + grid[neighbor.y][neighbor.x].h;
+                }
+            }
+
+            // No path found
+            const endTime = performance.now();
+            updateMetrics(0, explored.length, endTime - startTime, 0);
+            return [];
+        }
+
+        // Dijkstra's algorithm
+        function dijkstra() {
+            const openSet = [];
+            const closedSet = [];
+
+            // Reset grid values
+            for (let y = 0; y < rows; y++) {
+                for (let x = 0; x < cols; x++) {
+                    grid[y][x].g = Infinity;
+                    grid[y][x].parent = null;
+                }
+            }
+
+            // Initialize start node
+            const startNode = grid[start.y][start.x];
+            startNode.g = 0;
+            openSet.push(start);
+
+            const startTime = performance.now();
+
+            while (openSet.length > 0) {
+                // Find node with lowest g score
+                let lowestIndex = 0;
+                for (let i = 1; i < openSet.length; i++) {
+                    if (grid[openSet[i].y][openSet[i].x].g < grid[openSet[lowestIndex].y][openSet[lowestIndex].x].g) {
+                        lowestIndex = i;
+                    }
+                }
+
+                const current = openSet[lowestIndex];
+
+                // If we reached the end
+                if (current.x === end.x && current.y === end.y) {
+                    // Reconstruct path
+                    let temp = current;
+                    const path = [];
+                    while (temp !== null) {
+                        path.push(temp);
+                        temp = grid[temp.y][temp.x].parent;
+                    }
+
+                    const endTime = performance.now();
+                    updateMetrics(path.length, explored.length, endTime - startTime, path.length);
+                    return path.reverse();
+                }
+
+                // Move current from open to closed set
+                openSet.splice(lowestIndex, 1);
+                closedSet.push(current);
+
+                // Add to explored list for visualization
+                if (!(current.x === start.x && current.y === start.y)) {
+                    explored.push(current);
+                }
+
+                // Check neighbors
+                const neighbors = [
+                    {x: current.x + 1, y: current.y},
+                    {x: current.x - 1, y: current.y},
+                    {x: current.x, y: current.y + 1},
+                    {x: current.x, y: current.y - 1}
+                ];
+
+                for (const neighbor of neighbors) {
+                    // Check if neighbor is valid
+                    if (neighbor.x < 0 || neighbor.x >= cols ||
+                        neighbor.y < 0 || neighbor.y >= rows ||
+                        grid[neighbor.y][neighbor.x].isObstacle) {
+                        continue;
+                    }
+
+                    // Check if neighbor is in closed set
+                    if (closedSet.some(node => node.x === neighbor.x && node.y === neighbor.y)) {
+                        continue;
+                    }
+
+                    const tentativeG = grid[current.y][current.x].g + 1;
+
+                    if (!openSet.some(node => node.x === neighbor.x && node.y === neighbor.y)) {
+                        openSet.push(neighbor);
+                    } else if (tentativeG >= grid[neighbor.y][neighbor.x].g) {
+                        continue;
+                    }
+
+                    grid[neighbor.y][neighbor.x].parent = current;
+                    grid[neighbor.y][neighbor.x].g = tentativeG;
+                }
+            }
+
+            // No path found
+            const endTime = performance.now();
+            updateMetrics(0, explored.length, endTime - startTime, 0);
+            return [];
+        }
+
+        // Update metrics display
+        function updateMetrics(pathDist, nodesVis, compTime, pathLen) {
+            document.getElementById('pathDistance').textContent = pathDist;
+            document.getElementById('nodesVisited').textContent = nodesVis;
+            document.getElementById('pathLength').textContent = pathLen;
+            document.getElementById('timeMetric').textContent = Math.round(compTime) + ' ms';
+            document.getElementById('nodesMetric').textContent = nodesVis;
+            document.getElementById('costMetric').textContent = pathLen;
+
+            if (pathLen > 0) {
+                const efficiency = Math.round((Math.abs(end.x - start.x) + Math.abs(end.y - start.y)) / pathLen * 100);
+                document.getElementById('efficiencyMetric').textContent = efficiency + '%';
+            } else {
+                document.getElementById('efficiencyMetric').textContent = '0%';
+            }
+        }
+
+        // Set start point mode
+        function setStartPoint() {
+            currentMode = 'start';
+            document.getElementById('status').textContent = 'Click to set start point';
+        }
+
+        // Set end point mode
+        function setEndPoint() {
+            currentMode = 'end';
+            document.getElementById('status').textContent = 'Click to set end point';
+        }
+
+        // Add obstacle mode
+        function addObstacle() {
+            currentMode = 'obstacle';
+            document.getElementById('status').textContent = 'Click to add obstacle';
+        }
+
+        // Clear grid
+        function clearGrid() {
+            initGrid();
+            path = [];
+            explored = [];
+            updateMetrics(0, 0, 0, 0);
+            drawGrid();
+        }
+
+        // Run path planning
+        function runPathPlanning() {
+            document.getElementById('status').textContent = 'Calculating path...';
+            path = [];
+            explored = [];
+
+            const algorithm = document.getElementById('algorithmSelect').value;
+
+            switch(algorithm) {
+                case 'astar':
+                    path = aStar();
+                    break;
+                case 'dijkstra':
+                    path = dijkstra();
+                    break;
+                case 'greedy':
+                    // Simplified greedy algorithm for demo
+                    path = greedyBestFirst();
+                    break;
+                case 'wavefront':
+                    path = wavefrontPropagation();
+                    break;
+            }
+
+            document.getElementById('status').textContent = 'Path planning complete';
+            drawGrid();
+        }
+
+        // Greedy Best-First Search
+        function greedyBestFirst() {
+            const openSet = [];
+            const closedSet = [];
+
+            // Reset grid values
+            for (let y = 0; y < rows; y++) {
+                for (let x = 0; x < cols; x++) {
+                    grid[y][x].h = heuristic({x, y}, end);
+                    grid[y][x].parent = null;
+                }
+            }
+
+            openSet.push(start);
+
+            const startTime = performance.now();
+
+            while (openSet.length > 0) {
+                // Find node with lowest h score (heuristic)
+                let lowestIndex = 0;
+                for (let i = 1; i < openSet.length; i++) {
+                    if (grid[openSet[i].y][openSet[i].x].h < grid[openSet[lowestIndex].y][openSet[lowestIndex].x].h) {
+                        lowestIndex = i;
+                    }
+                }
+
+                const current = openSet[lowestIndex];
+
+                // If we reached the end
+                if (current.x === end.x && current.y === end.y) {
+                    // Reconstruct path
+                    let temp = current;
+                    const path = [];
+                    while (temp !== null) {
+                        path.push(temp);
+                        temp = grid[temp.y][temp.x].parent;
+                    }
+
+                    const endTime = performance.now();
+                    updateMetrics(path.length, explored.length, endTime - startTime, path.length);
+                    return path.reverse();
+                }
+
+                // Move current from open to closed set
+                openSet.splice(lowestIndex, 1);
+                closedSet.push(current);
+
+                // Add to explored list for visualization
+                if (!(current.x === start.x && current.y === start.y)) {
+                    explored.push(current);
+                }
+
+                // Check neighbors
+                const neighbors = [
+                    {x: current.x + 1, y: current.y},
+                    {x: current.x - 1, y: current.y},
+                    {x: current.x, y: current.y + 1},
+                    {x: current.x, y: current.y - 1}
+                ];
+
+                for (const neighbor of neighbors) {
+                    // Check if neighbor is valid
+                    if (neighbor.x < 0 || neighbor.x >= cols ||
+                        neighbor.y < 0 || neighbor.y >= rows ||
+                        grid[neighbor.y][neighbor.x].isObstacle) {
+                        continue;
+                    }
+
+                    // Check if neighbor is in closed set
+                    if (closedSet.some(node => node.x === neighbor.x && node.y === neighbor.y)) {
+                        continue;
+                    }
+
+                    if (!openSet.some(node => node.x === neighbor.x && node.y === neighbor.y)) {
+                        openSet.push(neighbor);
+                        grid[neighbor.y][neighbor.x].parent = current;
+                    }
+                }
+            }
+
+            // No path found
+            const endTime = performance.now();
+            updateMetrics(0, explored.length, endTime - startTime, 0);
+            return [];
+        }
+
+        // Wavefront propagation
+        function wavefrontPropagation() {
+            const queue = [];
+            const visited = [];
+
+            // Reset grid values
+            for (let y = 0; y < rows; y++) {
+                for (let x = 0; x < cols; x++) {
+                    grid[y][x].g = Infinity;
+                    grid[y][x].parent = null;
+                    visited[y] = visited[y] || [];
+                    visited[y][x] = false;
+                }
+            }
+
+            // Initialize start node
+            const startNode = grid[start.y][start.x];
+            startNode.g = 0;
+            queue.push(start);
+
+            const startTime = performance.now();
+
+            while (queue.length > 0) {
+                const current = queue.shift();
+
+                // Add to explored list for visualization
+                if (!(current.x === start.x && current.y === start.y)) {
+                    explored.push(current);
+                }
+
+                // If we reached the end
+                if (current.x === end.x && current.y === end.y) {
+                    // Reconstruct path
+                    let temp = current;
+                    const path = [];
+                    while (temp !== null) {
+                        path.push(temp);
+                        temp = grid[temp.y][temp.x].parent;
+                    }
+
+                    const endTime = performance.now();
+                    updateMetrics(path.length, explored.length, endTime - startTime, path.length);
+                    return path.reverse();
+                }
+
+                // Check neighbors
+                const neighbors = [
+                    {x: current.x + 1, y: current.y},
+                    {x: current.x - 1, y: current.y},
+                    {x: current.x, y: current.y + 1},
+                    {x: current.x, y: current.y - 1}
+                ];
+
+                for (const neighbor of neighbors) {
+                    // Check if neighbor is valid
+                    if (neighbor.x < 0 || neighbor.x >= cols ||
+                        neighbor.y < 0 || neighbor.y >= rows ||
+                        grid[neighbor.y][neighbor.x].isObstacle ||
+                        visited[neighbor.y][neighbor.x]) {
+                        continue;
+                    }
+
+                    const newG = grid[current.y][current.x].g + 1;
+
+                    if (newG < grid[neighbor.y][neighbor.x].g) {
+                        grid[neighbor.y][neighbor.x].g = newG;
+                        grid[neighbor.y][neighbor.x].parent = current;
+                        queue.push(neighbor);
+                    }
+
+                    visited[neighbor.y][neighbor.x] = true;
+                }
+            }
+
+            // No path found
+            const endTime = performance.now();
+            updateMetrics(0, explored.length, endTime - startTime, 0);
+            return [];
+        }
+
+        // Animate path
+        function animatePath() {
+            if (path.length === 0) return;
+
+            document.getElementById('status').textContent = 'Animating path...';
+
+            let step = 0;
+            const interval = setInterval(() => {
+                if (step < path.length) {
+                    // Highlight current step in the path
+                    ctx.fillStyle = 'rgba(255, 193, 7, 0.9)';
+                    ctx.fillRect(path[step].x * cellSize, path[step].y * cellSize, cellSize, cellSize);
+
+                    // Draw the path so far
+                    for (let i = 0; i <= step; i++) {
+                        ctx.fillStyle = 'rgba(255, 193, 7, 0.6)';
+                        ctx.fillRect(path[i].x * cellSize, path[i].y * cellSize, cellSize, cellSize);
+                    }
+
+                    step++;
+                } else {
+                    clearInterval(interval);
+                    document.getElementById('status').textContent = 'Animation complete';
+                    drawGrid(); // Redraw with full path
+                }
+            }, 100);
+        }
+
+        // Add random obstacles
+        function addRandomObstacles() {
+            for (let i = 0; i < 50; i++) {
+                const x = Math.floor(Math.random() * cols);
+                const y = Math.floor(Math.random() * rows);
+
+                // Don't place obstacles on start or end points
+                if (!((x === start.x && y === start.y) || (x === end.x && y === end.y))) {
+                    grid[y][x].isObstacle = true;
+                }
+            }
+            drawGrid();
+        }
+
+        // Reset demo
+        function resetDemo() {
+            start = { x: 5, y: 5 };
+            end = { x: 25, y: 15 };
+            path = [];
+            explored = [];
+            initGrid();
+            updateMetrics(0, 0, 0, 0);
+            document.getElementById('status').textContent = 'Ready';
+            drawGrid();
+        }
+
+        // Canvas click handler
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = Math.floor((e.clientX - rect.left) / cellSize);
+            const y = Math.floor((e.clientY - rect.top) / cellSize);
+
+            if (x >= 0 && x < cols && y >= 0 && y < rows) {
+                if (currentMode === 'start') {
+                    start = { x, y };
+                    document.getElementById('startPos').textContent = `(${x}, ${y})`;
+                    currentMode = 'none';
+                    document.getElementById('status').textContent = 'Ready';
+                } else if (currentMode === 'end') {
+                    end = { x, y };
+                    document.getElementById('endPos').textContent = `(${x}, ${y})`;
+                    currentMode = 'none';
+                    document.getElementById('status').textContent = 'Ready';
+                } else if (currentMode === 'obstacle') {
+                    grid[y][x].isObstacle = !grid[y][x].isObstacle;
+                }
+                drawGrid();
+            }
+        });
+
+        // Algorithm selection change
+        document.getElementById('algorithmSelect').addEventListener('change', function() {
+            const alg = this.value;
+            document.getElementById('selectedAlgorithm').textContent =
+                alg === 'astar' ? 'A* Algorithm' :
+                alg === 'dijkstra' ? 'Dijkstra\'s Algorithm' :
+                alg === 'greedy' ? 'Greedy Best-First Search' :
+                'Wavefront Propagation';
+
+            if (alg === 'astar' || alg === 'dijkstra') {
+                document.getElementById('optimal').textContent = 'Yes';
+                document.getElementById('complexity').textContent = alg === 'astar' ? 'O(b^d)' : 'O(V log V)';
+            } else {
+                document.getElementById('optimal').textContent = 'No';
+                document.getElementById('complexity').textContent = alg === 'greedy' ? 'O(b^m)' : 'O(V^2)';
+            }
+        });
+
+        // Initialize and draw
+        initGrid();
+        drawGrid();
+    </script>
+</body>
+</html>
