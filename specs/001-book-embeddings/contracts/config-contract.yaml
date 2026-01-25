@@ -1,0 +1,113 @@
+# Configuration Contract: Book Embedding Pipeline
+
+## Overview
+This contract defines the configuration parameters and interfaces for the book website embedding pipeline.
+
+## Configuration Parameters
+
+### Environment Variables
+```yaml
+COHERE_API_KEY:
+  type: string
+  required: true
+  description: API key for Cohere embedding service
+  format: secret
+
+QDRANT_URL:
+  type: string
+  required: true
+  description: URL for Qdrant vector database
+  format: uri
+
+QDRANT_API_KEY:
+  type: string
+  required: true
+  description: API key for Qdrant database access
+  format: secret
+
+BOOK_SITE_URLS:
+  type: string
+  required: true
+  description: Comma-separated list of Docusaurus site URLs to crawl
+  example: "https://example.com/docs,https://docs.another-site.com"
+
+CHUNK_SIZE:
+  type: integer
+  required: false
+  default: 1024
+  description: Size of text chunks for embedding generation
+  constraints:
+    min: 128
+    max: 4096
+
+CHUNK_OVERLAP:
+  type: integer
+  required: false
+  default: 128
+  description: Overlap between consecutive text chunks
+  constraints:
+    min: 0
+    max: 512
+
+EMBEDDING_MODEL:
+  type: string
+  required: false
+  default: "embed-multilingual-v3.0"
+  description: Cohere embedding model to use
+  enum: ["embed-multilingual-v3.0", "embed-english-v3.0"]
+```
+
+### Command Line Arguments
+```yaml
+--urls:
+  type: string
+  required: false
+  description: Override BOOK_SITE_URLS environment variable
+  example: "--urls https://example.com/docs"
+
+--chunk-size:
+  type: integer
+  required: false
+  description: Override CHUNK_SIZE environment variable
+
+--chunk-overlap:
+  type: integer
+  required: false
+  description: Override CHUNK_OVERLAP environment variable
+
+--collection-name:
+  type: string
+  required: false
+  default: "book_embeddings"
+  description: Qdrant collection name for storing vectors
+
+--config-file:
+  type: string
+  required: false
+  description: Path to alternative configuration file
+```
+
+## Input/Output Specifications
+
+### Input: Docusaurus Site URLs
+- **Format**: Array of valid HTTP/HTTPS URLs
+- **Validation**: Must be publicly accessible Docusaurus sites
+- **Processing**: Each URL is crawled for all accessible pages
+
+### Output: Qdrant Vector Collection
+- **Format**: Named collection with vector embeddings and metadata
+- **Schema**:
+  - Vector: Float array of embedding values
+  - Payload: JSON with URL, content, section title, and other metadata
+- **Indexing**: Optimized for cosine similarity search
+
+## Error Handling Contract
+- Network errors during crawling result in skipped pages with logging
+- API rate limits trigger exponential backoff retry mechanism
+- Invalid content results in processing continuation with error logging
+- Duplicate content is detected and prevented from being stored twice
+
+## Performance Expectations
+- Crawl rate: Configurable but respecting robots.txt and reasonable limits
+- Embedding rate: Limited by Cohere API throughput and rate limits
+- Storage rate: Limited by Qdrant Cloud performance characteristics

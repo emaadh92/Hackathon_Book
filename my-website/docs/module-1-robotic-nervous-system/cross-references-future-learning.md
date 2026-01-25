@@ -112,7 +112,7 @@ Robotics is a rapidly evolving field. To stay current:
 
 You've completed Module 1: The Robotic Nervous System. You now understand how robots organize their functions, how different parts communicate, and how abstract software decisions become physical actions. This foundation will serve you well as you continue your robotics education.
 
-**Ready to continue?** Proceed to [Module 2: Robot Perception and Sensing Systems](../module-2-perception-sensing/introduction.md) to explore how robots perceive their world!
+**Ready to continue?** Proceed to [Module 2: Digital Twin Technology](../module-2-digital-twin/chapter-1-introduction.md) to explore how robots perceive their world!
 
 ## Quick Reference for Future Use
 

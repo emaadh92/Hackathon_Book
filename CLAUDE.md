@@ -214,6 +214,8 @@ See `.specify/memory/constitution.md` for code quality, testing, performance, se
 - Static content in documentation files, no dynamic storage required (001-robotic-nervous-system)
 - Python 3.11, C++ (for NVIDIA Isaac components) + NVIDIA Isaac Sim, Isaac ROS, Navigation2 (Nav2) framework, ROS2 (Robot Operating System 2) (003-isaac-robot-brain)
 - N/A (simulation and real-time processing, no persistent storage required for core functionality) (003-isaac-robot-brain)
+- Python 3.11 + cohere, qdrant-client, beautifulsoup4, requests, python-dotenv, uv (package manager) (001-book-embeddings)
+- Qdrant Cloud (vector database), local file system for configuration (001-book-embeddings)
 
 ## Recent Changes
 - 001-robotic-nervous-system: Added Markdown/MDX for educational content, Python 3.11 for code examples + Docusaurus for documentation, ROS2 (Robot Operating System 2) concepts for communication paradigms

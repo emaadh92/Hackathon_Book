@@ -184,9 +184,9 @@ The following concept maps are available:
 ## Related Resources
 
 ### Within This Module
-- [Quickstart Guide](../quickstart.md) (in specs directory)
-- [Research Background](../research.md) (in specs directory)
-- [Implementation Plan](../plan.md) (in specs directory)
+- [Quickstart Guide](../specs/001-robotic-nervous-system/quickstart.md) (in specs directory)
+- [Research Background](../specs/001-robotic-nervous-system/research.md) (in specs directory)
+- [Implementation Plan](../specs/001-robotic-nervous-system/plan.md) (in specs directory)
 
 ### Beyond This Module
 - Module 2: Advanced Communication Patterns
